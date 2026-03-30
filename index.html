@@ -3,357 +3,114 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Capella Singapore — Guest Review Insights</title>
+<title>Singapore Luxury Hotel Review Insights</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --gold: #c9a84c;
-    --gold-light: #e8d08a;
-    --gold-dim: rgba(201,168,76,0.18);
-    --bg: #0e0e10;
-    --surface: #161618;
-    --surface2: #1e1e21;
-    --surface3: #252528;
-    --border: rgba(201,168,76,0.18);
-    --text: #e8e4dc;
-    --muted: #888580;
-    --star5: #c9a84c;
-    --star4: #8bbf78;
-    --star3: #6ba3c9;
-    --star2: #c97f4c;
-    --star1: #c94c4c;
-    --radius: 14px;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    line-height: 1.6;
-    min-height: 100vh;
-  }
-
-  /* ── HEADER ── */
-  header {
-    background: linear-gradient(135deg, #0b0b0d 0%, #131314 50%, #0f0e0c 100%);
-    border-bottom: 1px solid var(--border);
-    padding: 32px 40px 28px;
-    position: relative;
-    overflow: hidden;
-  }
-  header::before {
-    content: '';
-    position: absolute;
-    top: -60px; left: -60px;
-    width: 280px; height: 280px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(201,168,76,0.07) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  header::after {
-    content: '';
-    position: absolute;
-    bottom: -40px; right: 80px;
-    width: 200px; height: 200px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(201,168,76,0.05) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .header-inner { max-width: 1400px; margin: 0 auto; display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; }
-  .header-title h1 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 2.6rem;
-    font-weight: 300;
-    letter-spacing: 0.04em;
-    color: var(--text);
-    line-height: 1.1;
-  }
-  .header-title h1 span { color: var(--gold); font-style: italic; }
-  .header-title p { color: var(--muted); font-size: 13px; margin-top: 6px; letter-spacing: 0.03em; }
-  .header-badges { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
-  .badge {
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    font-weight: 500;
-    border: 1px solid var(--border);
-    color: var(--gold);
-    background: rgba(201,168,76,0.06);
-  }
-  .header-kpi { display: flex; gap: 16px; flex-shrink: 0; }
-  .kpi-card {
-    background: rgba(201,168,76,0.06);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 16px 22px;
-    text-align: center;
-    min-width: 110px;
-  }
-  .kpi-card .kpi-val {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 2rem;
-    font-weight: 500;
-    color: var(--gold);
-    line-height: 1;
-  }
-  .kpi-card .kpi-label { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
-
-  /* ── LAYOUT ── */
-  main { max-width: 1400px; margin: 0 auto; padding: 32px 40px 60px; }
-
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
-  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; margin-bottom: 24px; }
-  .grid-5col { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 24px; }
-  .span-2 { grid-column: span 2; }
-
-  /* ── PANELS ── */
-  .panel {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 24px;
-    position: relative;
-  }
-  .panel-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.15rem;
-    font-weight: 500;
-    letter-spacing: 0.03em;
-    color: var(--text);
-    margin-bottom: 4px;
-  }
-  .panel-sub {
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    margin-bottom: 20px;
-  }
-  .panel-divider { width: 32px; height: 1px; background: var(--gold); margin: 8px 0 18px; opacity: 0.6; }
-
-  /* ── METRIC TILES ── */
-  .metric-tile {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 20px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    position: relative;
-    overflow: hidden;
-  }
-  .metric-tile::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 2px;
-    background: var(--gold);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.3s ease;
-  }
-  .metric-tile:hover { border-color: rgba(201,168,76,0.4); background: var(--surface2); }
-  .metric-tile:hover::after { transform: scaleX(1); }
-  .metric-tile.active { border-color: var(--gold); background: var(--surface2); }
-  .metric-tile.active::after { transform: scaleX(1); }
-  .metric-tile .tile-label { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
-  .metric-tile .tile-val {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 2.2rem;
-    font-weight: 500;
-    color: var(--gold);
-    line-height: 1.1;
-    margin: 4px 0;
-  }
-  .metric-tile .tile-desc { font-size: 11px; color: var(--muted); }
-  .metric-tile .tile-bar {
-    height: 3px;
-    background: var(--surface3);
-    border-radius: 2px;
-    margin-top: 12px;
-    overflow: hidden;
-  }
-  .metric-tile .tile-bar-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--gold-light), var(--gold));
-    border-radius: 2px;
-    transition: width 1s ease;
-  }
-
-  /* ── RATING DISTRIBUTION ── */
-  .rating-dist { display: flex; flex-direction: column; gap: 10px; }
-  .rating-row { display: flex; align-items: center; gap: 12px; cursor: pointer; }
-  .rating-row:hover .rating-bar-fill { filter: brightness(1.15); }
-  .rating-row.dim { opacity: 0.35; }
-  .rating-stars {
-    display: flex; gap: 2px; align-items: center;
-    width: 70px; flex-shrink: 0;
-    font-size: 11px; font-weight: 500;
-    letter-spacing: 0.04em;
-  }
-  .star-icon { font-size: 10px; }
-  .rating-bar-bg { flex: 1; height: 20px; background: var(--surface3); border-radius: 4px; overflow: hidden; }
-  .rating-bar-fill { height: 100%; border-radius: 4px; transition: width 0.8s cubic-bezier(0.34,1.56,0.64,1); }
-  .rating-count { width: 28px; text-align: right; font-size: 13px; font-weight: 500; color: var(--text); }
-  .rating-pct { width: 44px; text-align: right; font-size: 11px; color: var(--muted); }
-
-  /* ── RADAR CHART ── */
-  .radar-wrap { display: flex; align-items: center; justify-content: center; height: 280px; }
-
-  /* ── SCORE HISTOGRAM ── */
-  .hist-wrap { height: 180px; }
-
-  /* ── SCATTER ── */
-  .scatter-wrap { height: 300px; }
-
-  /* ── LEGEND ── */
-  .legend { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
-  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); }
-  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-
-  /* ── REVIEW BROWSER ── */
-  .filter-bar {
-    display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
-    margin-bottom: 20px;
-  }
-  .filter-bar-label { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-right: 4px; }
-  .filter-btn {
-    padding: 6px 14px;
-    border-radius: 20px;
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--muted);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 12px;
-    cursor: pointer;
-    transition: all 0.2s;
-    letter-spacing: 0.04em;
-  }
-  .filter-btn:hover { border-color: var(--gold); color: var(--gold); }
-  .filter-btn.active { background: var(--gold-dim); border-color: var(--gold); color: var(--gold); }
-
-  .reviews-grid { display: grid; gap: 16px; }
-  .review-card {
-    background: var(--surface2);
-    border: 1px solid transparent;
-    border-radius: 10px;
-    padding: 20px;
-    transition: border-color 0.2s;
-    animation: fadeUp 0.3s ease;
-  }
-  .review-card:hover { border-color: var(--border); }
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .review-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-  .review-rating { display: flex; align-items: center; gap: 6px; }
-  .stars-display { display: flex; gap: 2px; }
-  .star-filled { color: var(--gold); font-size: 12px; }
-  .star-empty { color: var(--surface3); font-size: 12px; }
-  .review-num { font-size: 11px; color: var(--muted); }
-  .review-scores { display: flex; gap: 10px; flex-wrap: wrap; }
-  .score-pill {
-    padding: 2px 9px;
-    border-radius: 12px;
-    font-size: 10px;
-    letter-spacing: 0.05em;
-    border: 1px solid rgba(255,255,255,0.08);
-    color: var(--muted);
-  }
-  .score-pill strong { color: var(--text); margin-left: 3px; }
-  .review-text {
-    font-size: 13px;
-    color: var(--muted);
-    line-height: 1.7;
-    display: -webkit-box;
-    -webkit-line-clamp: 4;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-  .review-text.expanded { -webkit-line-clamp: unset; }
-  .review-expand {
-    background: none; border: none; color: var(--gold);
-    font-size: 11px; cursor: pointer; margin-top: 6px;
-    font-family: 'DM Sans', sans-serif;
-    letter-spacing: 0.04em;
-    padding: 0; text-decoration: underline;
-    text-underline-offset: 2px;
-  }
-
-  /* ── SORT TOGGLE ── */
-  .sort-toggle { display: flex; gap: 8px; align-items: center; margin-left: auto; }
-  .sort-btn {
-    padding: 5px 12px;
-    border-radius: 6px;
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--muted);
-    font-size: 11px; cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    letter-spacing: 0.05em;
-    transition: all 0.2s;
-  }
-  .sort-btn.active { background: var(--gold-dim); border-color: var(--gold); color: var(--gold); }
-
-  /* ── SECTION LABEL ── */
-  .section-head {
-    display: flex; align-items: center; gap: 16px;
-    margin-bottom: 20px;
-    margin-top: 8px;
-  }
-  .section-head-label {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.05rem;
-    font-weight: 400;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--gold);
-    opacity: 0.7;
-    white-space: nowrap;
-  }
-  .section-line { flex: 1; height: 1px; background: var(--border); }
-
-  /* ── FOOTER ── */
-  footer {
-    text-align: center;
-    color: var(--muted);
-    font-size: 11px;
-    letter-spacing: 0.06em;
-    padding: 24px 40px;
-    border-top: 1px solid var(--border);
-  }
-
-  /* ── RESPONSIVE ── */
-  @media (max-width: 900px) {
-    main { padding: 20px; }
-    header { padding: 24px 20px; }
-    .header-inner { flex-direction: column; }
-    .grid-2, .grid-3 { grid-template-columns: 1fr; }
-    .grid-5col { grid-template-columns: repeat(2, 1fr); }
-    .header-kpi { flex-wrap: wrap; }
-    .header-title h1 { font-size: 2rem; }
-    .span-2 { grid-column: span 1; }
-  }
+:root{
+  --gold:#c9a84c;--gold-light:#e8d08a;--gold-dim:rgba(201,168,76,0.15);
+  --bg:#0e0e10;--surface:#161618;--surface2:#1e1e21;--surface3:#252528;
+  --border:rgba(201,168,76,0.18);--text:#e8e4dc;--muted:#777472;--radius:14px;
+  --capella:#c9a84c;--mbs:#6ba3c9;--raffles:#8bbf78;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.6;min-height:100vh;}
+header{background:linear-gradient(135deg,#0b0b0d,#131314,#0f0e0c);border-bottom:1px solid var(--border);padding:28px 40px;position:relative;overflow:hidden;}
+header::before{content:'';position:absolute;top:-60px;left:-60px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,0.07),transparent 70%);pointer-events:none;}
+.header-inner{max-width:1400px;margin:0 auto;display:flex;align-items:flex-start;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+.header-title h1{font-family:'Cormorant Garamond',serif;font-size:2.3rem;font-weight:300;letter-spacing:0.04em;line-height:1.1;}
+.header-title h1 span{color:var(--gold);font-style:italic;}
+.header-title p{color:var(--muted);font-size:12px;margin-top:5px;}
+.header-badges{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
+.badge{padding:3px 11px;border-radius:20px;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;font-weight:500;border:1px solid var(--border);color:var(--gold);background:rgba(201,168,76,0.06);}
+.header-kpi{display:flex;gap:12px;flex-shrink:0;flex-wrap:wrap;}
+.kpi-card{background:rgba(201,168,76,0.06);border:1px solid var(--border);border-radius:var(--radius);padding:14px 20px;text-align:center;min-width:88px;}
+.kpi-val{font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:500;color:var(--gold);line-height:1;}
+.kpi-label{font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-top:3px;}
+main{max-width:1400px;margin:0 auto;padding:28px 40px 60px;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-bottom:20px;}
+.grid-5col{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:20px;}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px;}
+.panel-title{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:500;letter-spacing:0.03em;margin-bottom:2px;}
+.panel-sub{font-size:10px;color:var(--muted);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:16px;}
+.panel-divider{width:28px;height:1px;background:var(--gold);margin:6px 0 16px;opacity:0.6;}
+.hotel-tabs{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+.hotel-tab{padding:7px 18px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:7px;}
+.hotel-tab:hover{border-color:rgba(201,168,76,0.4);color:var(--text);}
+.hotel-tab.active{color:#0e0e10;font-weight:500;}
+.hotel-tab.all.active{background:var(--gold);border-color:var(--gold);}
+.hotel-tab.capella.active{background:var(--capella);border-color:var(--capella);}
+.hotel-tab.mbs.active{background:var(--mbs);border-color:var(--mbs);}
+.hotel-tab.raffles.active{background:var(--raffles);border-color:var(--raffles);}
+.hotel-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.metric-tile{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;position:relative;overflow:hidden;transition:border-color 0.2s;}
+.metric-tile::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform 0.3s ease;}
+.metric-tile:hover{border-color:rgba(201,168,76,0.4);}
+.metric-tile:hover::after{transform:scaleX(1);}
+.tile-label{font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);}
+.tile-val{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:500;color:var(--gold);line-height:1.1;margin:3px 0;}
+.tile-desc{font-size:10px;color:var(--muted);}
+.tile-bar{height:3px;background:var(--surface3);border-radius:2px;margin-top:10px;overflow:hidden;}
+.tile-bar-fill{height:100%;background:linear-gradient(90deg,var(--gold-light),var(--gold));border-radius:2px;}
+.rating-dist{display:flex;flex-direction:column;gap:9px;}
+.rating-row{display:flex;align-items:center;gap:10px;cursor:pointer;transition:opacity 0.2s;}
+.rating-row.dim{opacity:0.3;}
+.rating-stars{width:60px;flex-shrink:0;font-size:11px;font-weight:500;}
+.rating-bar-bg{flex:1;height:18px;background:var(--surface3);border-radius:4px;overflow:hidden;}
+.rating-bar-fill{height:100%;border-radius:4px;transition:width 0.7s cubic-bezier(0.34,1.56,0.64,1);}
+.rating-count{width:24px;text-align:right;font-size:12px;font-weight:500;}
+.rating-pct{width:38px;text-align:right;font-size:10px;color:var(--muted);}
+.radar-wrap{height:260px;display:flex;align-items:center;justify-content:center;}
+.comparison-wrap{height:260px;}
+.hist-wrap{height:170px;}
+.section-head{display:flex;align-items:center;gap:14px;margin-bottom:18px;margin-top:4px;}
+.section-head-label{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:400;letter-spacing:0.08em;text-transform:uppercase;color:var(--gold);opacity:0.75;white-space:nowrap;}
+.section-line{flex:1;height:1px;background:var(--border);}
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:18px;}
+.filter-bar-label{font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);}
+.filter-btn{padding:5px 13px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:11px;cursor:pointer;transition:all 0.2s;}
+.filter-btn:hover{border-color:var(--gold);color:var(--gold);}
+.filter-btn.active{background:var(--gold-dim);border-color:var(--gold);color:var(--gold);}
+.sort-toggle{display:flex;gap:6px;align-items:center;margin-left:auto;}
+.sort-btn{padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:10px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;}
+.sort-btn.active{background:var(--gold-dim);border-color:var(--gold);color:var(--gold);}
+.reviews-grid{display:grid;gap:14px;}
+.review-card{background:var(--surface2);border:1px solid transparent;border-radius:10px;padding:18px;transition:border-color 0.2s;animation:fadeUp 0.25s ease;}
+.review-card:hover{border-color:var(--border);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.review-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:10px;flex-wrap:wrap;}
+.review-meta{display:flex;align-items:center;gap:10px;}
+.hotel-pill{padding:2px 9px;border-radius:10px;font-size:9px;letter-spacing:0.07em;text-transform:uppercase;font-weight:500;}
+.stars-display{display:flex;gap:1px;}
+.star-f{color:var(--gold);font-size:11px;}
+.star-e{color:var(--surface3);font-size:11px;}
+.review-scores{display:flex;gap:8px;flex-wrap:wrap;}
+.score-pill{padding:2px 8px;border-radius:10px;font-size:9px;border:1px solid rgba(255,255,255,0.07);color:var(--muted);}
+.score-pill strong{color:var(--text);margin-left:2px;}
+.review-text{font-size:12.5px;color:var(--muted);line-height:1.7;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+.review-text.expanded{-webkit-line-clamp:unset;}
+.review-expand{background:none;border:none;color:var(--gold);font-size:10px;cursor:pointer;margin-top:5px;font-family:'DM Sans',sans-serif;padding:0;text-decoration:underline;text-underline-offset:2px;}
+footer{text-align:center;color:var(--muted);font-size:10px;letter-spacing:0.06em;padding:20px 40px;border-top:1px solid var(--border);}
+@media(max-width:900px){
+  main,header{padding:18px;}
+  .grid-2,.grid-3{grid-template-columns:1fr;}
+  .grid-5col{grid-template-columns:repeat(2,1fr);}
+  .header-title h1{font-size:1.8rem;}
+}
 </style>
 </head>
 <body>
-
 <header>
   <div class="header-inner">
     <div class="header-title">
-      <h1>Capella Singapore<br><span>Guest Review Insights</span></h1>
-      <p>Sentiment analysis across 27 guest reviews &nbsp;·&nbsp; Capella Singapore, Sentosa Island</p>
+      <h1>Singapore Luxury Hotels<br><span>Guest Review Insights</span></h1>
+      <p>Sentiment analysis across 49 reviews · Capella · Marina Bay Sands · Raffles</p>
       <div class="header-badges">
         <span class="badge">Interactive</span>
-        <span class="badge">Staff Sentiment</span>
-        <span class="badge">Filterable Reviews</span>
+        <span class="badge">3 Hotels</span>
+        <span class="badge">49 Reviews</span>
+        <span class="badge">5 Dimensions</span>
       </div>
     </div>
     <div class="header-kpi" id="header-kpi"></div>
@@ -361,21 +118,20 @@
 </header>
 
 <main>
-
-  <!-- METRIC TILES -->
-  <div class="section-head">
-    <span class="section-head-label">Service Sentiment Dimensions</span>
-    <div class="section-line"></div>
-    <span style="font-size:11px;color:var(--muted);white-space:nowrap">Click a dimension to explore</span>
+  <div class="hotel-tabs">
+    <button class="hotel-tab all active" data-hotel="all"><span class="hotel-dot" style="background:var(--gold)"></span>All Hotels (49)</button>
+    <button class="hotel-tab capella" data-hotel="Capella"><span class="hotel-dot" style="background:var(--capella)"></span>Capella (27)</button>
+    <button class="hotel-tab mbs" data-hotel="Marina Bay Sands"><span class="hotel-dot" style="background:var(--mbs)"></span>Marina Bay Sands (12)</button>
+    <button class="hotel-tab raffles" data-hotel="Raffles"><span class="hotel-dot" style="background:var(--raffles)"></span>Raffles (10)</button>
   </div>
 
+  <div class="section-head"><span class="section-head-label">Service Sentiment Dimensions</span><div class="section-line"></div></div>
   <div class="grid-5col" id="metric-tiles"></div>
 
-  <!-- ROW: Rating Distribution + Radar -->
   <div class="grid-2">
     <div class="panel">
       <div class="panel-title">Overall Rating Distribution</div>
-      <div class="panel-sub">Click a star rating to filter reviews below</div>
+      <div class="panel-sub">Click a rating to filter reviews below</div>
       <div class="panel-divider"></div>
       <div class="rating-dist" id="rating-dist"></div>
     </div>
@@ -383,390 +139,192 @@
       <div class="panel-title">Sentiment Radar</div>
       <div class="panel-sub">Average scores across all 5 dimensions (scale 1–5)</div>
       <div class="panel-divider"></div>
-      <div class="radar-wrap">
-        <canvas id="radarChart"></canvas>
-      </div>
+      <div class="radar-wrap"><canvas id="radarChart"></canvas></div>
     </div>
   </div>
 
-  <!-- SCORE HISTOGRAMS -->
-  <div class="section-head" style="margin-top:0">
+  <div class="section-head"><span class="section-head-label">Hotel Comparison</span><div class="section-line"></div></div>
+  <div class="panel" style="margin-bottom:20px">
+    <div class="panel-title">Sentiment Scores by Hotel</div>
+    <div class="panel-sub">Average score per dimension — Capella vs Marina Bay Sands vs Raffles</div>
+    <div class="panel-divider"></div>
+    <div class="comparison-wrap"><canvas id="comparisonChart"></canvas></div>
+  </div>
+
+  <div class="section-head">
     <span class="section-head-label">Score Distributions</span>
     <div class="section-line"></div>
-    <span id="hist-context" style="font-size:11px;color:var(--muted);white-space:nowrap">All reviews</span>
+    <span id="hist-context" style="font-size:10px;color:var(--muted);white-space:nowrap">All reviews</span>
   </div>
-
   <div class="grid-3">
-    <div class="panel">
-      <div class="panel-title">Luggage Handling</div>
-      <div class="panel-sub">Score from 1–5</div>
-      <div class="hist-wrap"><canvas id="hist0"></canvas></div>
-    </div>
-    <div class="panel">
-      <div class="panel-title">High Touch Service</div>
-      <div class="panel-sub">Score from 1–5</div>
-      <div class="hist-wrap"><canvas id="hist1"></canvas></div>
-    </div>
-    <div class="panel">
-      <div class="panel-title">Staff Availability</div>
-      <div class="panel-sub">Score from 1–5</div>
-      <div class="hist-wrap"><canvas id="hist2"></canvas></div>
-    </div>
-    <div class="panel">
-      <div class="panel-title">Staff Competency</div>
-      <div class="panel-sub">Score from 1–5</div>
-      <div class="hist-wrap"><canvas id="hist3"></canvas></div>
-    </div>
-    <div class="panel">
-      <div class="panel-title">Staff Attitude</div>
-      <div class="panel-sub">Score from 1–5</div>
-      <div class="hist-wrap"><canvas id="hist4"></canvas></div>
-    </div>
-    <div class="panel">
-      <div class="panel-title">Rating vs. Sentiment</div>
-      <div class="panel-sub">Overall rating vs. avg service score per review</div>
-      <div class="hist-wrap"><canvas id="scatterChart"></canvas></div>
-    </div>
+    <div class="panel"><div class="panel-title">Luggage Handling</div><div class="panel-sub">Score 1–5</div><div class="hist-wrap"><canvas id="hist0"></canvas></div></div>
+    <div class="panel"><div class="panel-title">High Touch Service</div><div class="panel-sub">Score 1–5</div><div class="hist-wrap"><canvas id="hist1"></canvas></div></div>
+    <div class="panel"><div class="panel-title">Staff Availability</div><div class="panel-sub">Score 1–5</div><div class="hist-wrap"><canvas id="hist2"></canvas></div></div>
+    <div class="panel"><div class="panel-title">Staff Competency</div><div class="panel-sub">Score 1–5</div><div class="hist-wrap"><canvas id="hist3"></canvas></div></div>
+    <div class="panel"><div class="panel-title">Staff Attitude</div><div class="panel-sub">Score 1–5</div><div class="hist-wrap"><canvas id="hist4"></canvas></div></div>
+    <div class="panel"><div class="panel-title">Rating vs. Avg Sentiment</div><div class="panel-sub">Per review: overall rating vs mean service score</div><div class="hist-wrap"><canvas id="scatterChart"></canvas></div></div>
   </div>
 
-  <!-- REVIEW BROWSER -->
-  <div class="section-head">
-    <span class="section-head-label">Review Explorer</span>
-    <div class="section-line"></div>
-  </div>
-
+  <div class="section-head"><span class="section-head-label">Review Explorer</span><div class="section-line"></div></div>
   <div class="panel" style="margin-bottom:0">
-    <div class="filter-bar" id="filter-bar">
-      <span class="filter-bar-label">Filter by rating:</span>
-      <button class="filter-btn active" data-rating="all">All (27)</button>
-      <button class="filter-btn" data-rating="5">★ 5 (15)</button>
-      <button class="filter-btn" data-rating="4">★ 4 (3)</button>
-      <button class="filter-btn" data-rating="3">★ 3 (4)</button>
-      <button class="filter-btn" data-rating="2">★ 2 (1)</button>
-      <button class="filter-btn" data-rating="1">★ 1 (4)</button>
+    <div class="filter-bar">
+      <span class="filter-bar-label">Rating:</span>
+      <button class="filter-btn active" data-rating="all">All</button>
+      <button class="filter-btn" data-rating="5">★ 5</button>
+      <button class="filter-btn" data-rating="4">★ 4</button>
+      <button class="filter-btn" data-rating="3">★ 3</button>
+      <button class="filter-btn" data-rating="2">★ 2</button>
+      <button class="filter-btn" data-rating="1">★ 1</button>
       <div class="sort-toggle">
-        <span style="font-size:11px;color:var(--muted);letter-spacing:0.05em">Sort:</span>
+        <span style="font-size:10px;color:var(--muted)">Sort:</span>
         <button class="sort-btn active" data-sort="default">Default</button>
-        <button class="sort-btn" data-sort="high">Highest First</button>
-        <button class="sort-btn" data-sort="low">Lowest First</button>
+        <button class="sort-btn" data-sort="high">High→Low</button>
+        <button class="sort-btn" data-sort="low">Low→High</button>
       </div>
     </div>
     <div class="reviews-grid" id="reviews-grid"></div>
   </div>
-
 </main>
-
-<footer>
-  Capella Singapore · Guest Review Sentiment Dashboard · 27 Reviews Analysed
-</footer>
+<footer>Singapore Luxury Hotel Sentiment Dashboard · 49 Reviews · Capella · Marina Bay Sands · Raffles</footer>
 
 <script>
-// ── DATA ──
-const REVIEWS = [{"review":"Capella Singapore is truly a honeymoon we will remember for a lifetime.\nMy husband and I stayed at Capella Singapore for our honeymoon and it turned out to be one of the best decisions of our lives. From the moment we arrived until the moment we left, every detail, every interaction and every experience felt thoughtful, personal and genuinely heartfelt. This was not just a luxury stay, it was an emotional and unforgettable journey.\nWhat truly sets Capella apart is its people. The warmth, professionalism and sincerity of the team elevated every moment of our stay into something extraordinary.\nElton and Boon from the Bell Team were our first touchpoint with Capella and they immediately set the tone for what became a flawless experience. Their attentiveness, efficiency and calm confidence made us feel welcomed and taken care of from the very start. They were never just handling our luggage, they were quietly ensuring that every movement and every request felt effortless. Their hospitality was subtle, polished and deeply reassuring.\nSherlyn deserves special recognition for the beautiful honeymoon room setup. What she created for us was beyond stunning, it was emotional. Walking into a room that had been so lovingly prepared with so much attention to detail made us feel truly valued and celebrated as a couple. It was not just d\u00e9cor, it was a meaningful gesture that we will always remember.\nRens, who conducted the activities and classes, brought so much joy and warmth to our stay. His friendly and engaging personality made every session enjoyable and relaxed. Whether we were learning something new or simply enjoying the moment, he had a wonderful way of making us feel comfortable and present.\nAt Auriga Spa, the experience was equally lovely. The atmosphere was calm, soothing and beautifully designed, making it a perfect place for couples to unwind and reconnect during a honeymoon stay.\nTogether, these wonderful people transformed Capella Singapore from a beautiful resort into something truly meaningful. We did not feel like guests, we felt genuinely cared for and celebrated during one of the most important moments of our lives.\nCapella Singapore is not just a destination. It is a place of warmth, elegance and outstanding hospitality. To Elton, Boon, Sherlyn and Rens, thank you for giving us a honeymoon we will treasure forever.","rating":5,"luggage":4.0,"highTouch":4.1,"availability":5.0,"competency":3.0,"attitude":3.5},{"review":"The villa itself was stunning, impeccably maintained, and designed with such care that we felt both spoiled and at home at the same time. The lush grounds and the serene atmosphere created the perfect backdrop for our family holiday. Our children were made to feel just as welcome as the adults, which made the stay effortless and joyful for us as parents.\n\n\n\nEqually important was the service. Every member of the team we encountered was not only highly professional but also genuinely warm and caring. From the housekeeping staff who anticipated our needs before we even mentioned them, to the concierge and culturists who went above and beyond to personalize our experience, to the spa team who provided world-class treatments, we were consistently impressed. The seamless luggage transfer from our previous hotel, the thoughtful arrangements at the restaurants, and even the smallest gestures like a smile or a kind word,were all noticed and deeply appreciated.","rating":5,"luggage":3.0,"highTouch":4.0,"availability":4.0,"competency":5.0,"attitude":4.0},{"review":"This is my 3rd trip to The Capella. Obviously in Singapore there are many lovely hotels from which to select a place to stay. And The Capella checks a number of boxes: beautiful scenery, peaceful, wonderful food, luxurious surroundings etc. But then again there are lots of hotels that also have those attributes. Where The Capella stands out is it's service which is virtually flawless. From my initial interactions from Erin who checked me in, to Boone assisting me with my luggage, to Emily in the Living Room lounge - everyone I encountered was joyful, helpful, eager to please hence making incredible impressions. If I were going to return to Singapore, and I hope to - I would absolutely return again. Many thanks to Mohamad Ezaz Ismil the manager of guest services for handling all the arrangements for the trip and making me feel so welcomed. This is a truly special place.","rating":5,"luggage":5.0,"highTouch":3.7,"availability":4.0,"competency":null,"attitude":5.0},{"review":"Capella Singapore is surprisingly captivating. The room is luxurious & warmly appointed. The view of the sunrise from the room is so magical, the peacock living in the hotel made it even more mythical.\n\nMs. Sun Yan, the housekeeping provided an outstanding service, never say no to any requests & greeted us with warm smile every time we met. Restaurant, Banquet & Chef Team are very attentive & helpful. Ariga Spa is beautiful, the facility & hospitality is top notch. Special thanks to the night manager who helped resolve luggage incident just in time prior to my departure.\n\nCan't wait to revisit & Capella Singapore has a special place in my heart. Thank you to the entire team.","rating":5,"luggage":3.0,"highTouch":2.0,"availability":3.0,"competency":3.0,"attitude":4.3},{"review":"Prior to my arrival, I have exchanged emails with Adie, Artiqah, Bevan, Cheryl, Intan, Lyn, Noelle and they have been very helpful and patient with me as I carefully plan my proposal stay.\n\nI had also went down for a showroom and Bevan remembers me from our email exchanged and was also there to assist me as he drove us to the Villa, showed us to the room and explained the room in detail and as I shared about the plans with him, he\u2019s able to use his knowledge of the hotel to give me recommendations and suggestions!\n\nUpon our arrival, we were assisted by Kenneth, who is an absolute star. He immediately recognised me through I believe the notes that was left in the system, kept everything a secret as instructed in my emails and ran through the check-in process very swiftly and informatively. We were also served a pair of welcome drinks and it tastes really good! As we were early, they had offered to store our luggage and sit us in their living room where we get to enjoy snacks and drinks while waiting for the room. Then, I received a call from Aishah, who is also an absolute gem to this property as she asked if whether I am convenient to speak first as she needed to understand further the details about the secret proposal without my partner knowing. As the balloons vendor I engaged came too early, Aishah checked with my if the balloons needed to be placed in the room prior or after the check-in as the balloons are already on the way to the room, to which I said it\u2019s fine to be in the room (as I was afraid that that\u2019ll be too much of a hassle for them to bring it out). After which, when I returned back to the reception, Kenneth then discussed with me through his understanding of the long email thread I have with them that it was meant for a surprise proposal but my visitors have yet to arrive and suggested to place the balloons in the room only after they had arrived, to which I hesitantly agreed, as I was still afraid that it\u2019ll be a hassle for them, to which Kenneth and Aishah reassured me that it is perfectly fine as the priority is the proposal itself. Thank you 2 so very much!\n\nI\u2019d also like to thank Karan (I hope I spelt it correctly but I think not), who drove us to our Villa and gave us a very detailed room tour, explaining the amenities and functions of the room so that we are able to make full use of Al the services that they provides!\n\nDuring our stay, we headed over for the bath bomb making session and was attended to by Lexi, who was patient in explaining the steps and different scents of the bath bombs and we really had a lot of fun doing them! Despite there being 3 groups of participants, Lexi never failed to check on every group every now and then! In the same evening, Aishah saw me again and congratulated me and wanted to extend it to my partner as well personally, despite her being outside the lobby!\n\nOverall, everyone has been very friendly and polite. My partner and I enjoyed our stay thoroughly!","rating":5,"luggage":3.0,"highTouch":3.7,"availability":3.4,"competency":3.0,"attitude":5.0},{"review":"We have visited many hotels but none like the Capella Singapore. The team really take note of the guests' every detail to ensure the guests really enjoy their stay. Kudos to the management and team for making our 26th wedding anniversary a special, memorable and unforgettable one.\n\nSpecial thanks to Cloris for your call 3 days before our arrival. I have mentioned the stay is to celebrate our 26th wedding anniversary and then upon check in, many surprises followed. Thank you for the personalized anniversary card as well as the amenities you have prepared for us when we checked in to the villa. A great thanks to Cheryl too for a smooth and fast check-in. Thank you for your patience for showing us around our villa and talk to us cheerfully. Great job to the Culturist team!\n\nBig thanks to Charis for the special hazelnut anniversary cake, personalized card and Chef George for the chocolate platter as well as the amenities you guys have sent it to our villa on day 1 and 2. Your kind thoughts have surprised us and we are so grateful for everything you have done for us. Well done The Pastry Team.\n\nA big shout out to Sharles from the In-room dining. Thank you for preparing and sharing with us the special tea leaves from the hotel to let us enjoyed together with the pastries and cakes. My husband enjoyed the pandan chiffon tea so much. Also thanks for the evening surprises you have sent it to our villa when we are not around. Great job and well done to the In-room dining team.\n\nWe had breakfast at both Cassia and Gallery. Cassia served yum cha dim sum breakfast which is quite a special touch since we hardly find any other hotel served only dim sum breakfast.\n\nGallery served continental breakfast and we really enjoyed the continental breakfast. It was one of the best hotel breakfast we have enjoyed in Singapore so far. And we have received another surprise by receiving a small anniversary cake from the staff. We were really touched and feel impressed to the hotel management for having such good system to take note of guests' details.\n\nI have opted for express check out and since my husband left the hotel early in the morning, so when i am ready to check out, l called a buggy to help me with my luggage. Loges arrived in front of the villa within 5 minutes. He helped me with my luggage and I have informed Loges i have parked my car at the hotel entrance. Without me even need to show him my valet coupon, he surprised me by giving me my car key immediately. In summary, he is aware where I parked my car and his intention was to send me straight to my car. I was like WOW! Your hotel really had a super efficient system and all the staff have been trained well.\n\nAnother staff we would like to thank is Ravi Kumar. Thank you for taking good care of us.\n\nThank you Capella Singapore. All of you have made our stay so memorable and unforgettable. Please keep up your good work and we will definitely be back. Hope to see you soon. Cheers!","rating":5,"luggage":3.4,"highTouch":3.4,"availability":3.0,"competency":4.0,"attitude":3.0},{"review":"The entire Capella experience is extraordinary and much recommended. The main draw I would say is the exceptional service. It began with arrival, we were well taken care of at check-in with drinks provided and complimentary valet parking and luggage service. There was also a guide introducing us to the grounds and facilities, and even to the devices in our room. After check-in, we were well greeted with a ready hot tub which was a pleasant surprise, and the cherry on top is the wine, fruit plate and macaroons for our honeymoon. There were also some small memorable moments such as the ice cold bottle of water serviced to us when we went to use the pool, and the quick and easy in room dining service with a make shift round table! The most memorable memory would be the rose petals lined floor and bed, pre-made bubble bath with rose petals, and even a filled ice bucket waiting for us after our spa and dinner. That was the most touching moment a hotel could have provided. Kudos to Capella.\n","rating":5,"luggage":4.0,"highTouch":3.7,"availability":4.0,"competency":null,"attitude":3.0},{"review":"Check In \u2013 I arrived to an empty lobby at 10:30am on a weekday and offered assistance for my luggage when I stepped off. Already a great impression as this gesture was sorely missed in some similar class properties. I was invited to be seated while they took my ID and credit card and soon after, a staff brought me through my reservation details including the activities booked for \u2013 all complete in less than 10mins including the waiting time.\n\nRoom \u2013 My Capella Suite (100SqM) was a tremendous amount of space and awesome to experience in person! The floorplan hardly gives justice to the amount of space I feel as I stepped into my personal haven for the next 2 days.\n\nAfter stepping into a relatively simple entranceway, you\u2019d seeing your living room in its full glory. A generous seating layout of a angular 3-seater + 1 single seater + 1 rocking chair sits surrounds the double tier coffee table adorned with cute balloons for my special occasion.\n\nThe magnificent area begins with a huge king bed (a little soft for me though) with 2 bedside tables each with charging ports and bedside lighting controls.\n\nBehind this block of space is your entire bathroom. The linear but spacious space contains double sinks with more than plenty countertop space and neatly organized toiletries (decorated with flower petals!). Opposite this space is a full-on dressing table with 3 mirror panels to put on your face.\n\nIn one end of this is the huge shower space decked out in classy dark grey marbling, with a classy (and very clean) bathtub nestled on one side. Toiletries are of course Aseop branded which is certain to make some swoon.\n\nBreakfast \u2013 served at The Knolls from 7am-11am, booking of your desired arrival timeslot is required (eg 7:00-7:30am, 8:00am-8:30am) but note that it is only for arrival time and you can definitely stay beyond the 30mins (they didn\u2019t chase me out when I sat from 8am to 9:15am). Breakfast is an ala carte buffet affair (sorry for the crappy menu pic) so feel free to go crazy. I wasn\u2019t feeling particularly egg-ish that morning so I picked Laksa kosong, Siew Mai, and Lobster Dumplings all of which were not bad. The Bircher Muesli and Coconut Chia Seed Pudding unfortunately did not pass \u2013 too sweet. Good strong coffee though. Great service too.\n\nThere are a total of 3 pools in a tier arrangement for guest\u2019s picking and no bookings are required which is quite a departure from the norm these days. The top 2 tiers are free form, comes with a view due to its height, and dotted with plenty of sunbeds around them. The 3rd tier is a lap pool of sorts with no view but very private due to its \u201chidden\u201d location. Attentive pool attendants are always around to make sure that guests are comfy and tidy up the space if need be.\n\nService \u2013 I\u2019ll come out and say outright that Capella service is phenomenal. There is something about their stealthy way of using their comms to inform each other of your last name so you are almost addressed by your last name. Every single staff you pass by greets you. Every staff I\u2019ve more closely interacted with are effortlessly polite and seems really genuine to want to make your stay as comfortable as possible. Housekeeping staff brings requested items in a basket and places them personally instead of just handing them over at the door. And every single staff takes off their shoes before entering your room \u2013 this alone will make me come back. I am also super duper impressed that the special occasion theme made its way throughout the entire stay \u2013 I mean, honestly, it made me feel really special and shows the volume of effort and harmonized coordination across the various departments.","rating":5,"luggage":2.0,"highTouch":3.3,"availability":3.7,"competency":2.0,"attitude":5.0},{"review":"For the price, the food and service were shockingly bad. Zero communication among the team(s), i cannot convey what a sad waste of money this was.\n\nCheck in was clumsy. We were sat in a small drab room and left to sit for more than 20 minutes. Took our own luggage out of car to hand to porters and parked our own car. 1 star holiday inn.\n\nFood was abysmal. A $300 meal in Bob\u2019s bar on the first night sealed the fact that we were going to have to order delivery food from outside for the rest of the staycation. It was like bad airplane food. A $30 Cuban sandwich was like something from 7-Eleven.\n\nIt became a running joke with the children that you had to order a buggy 20 minutes in advance, and even then often they never came. When we would walk up to the front desk (due to no show) there will be three buggies there and the staff standing around. One time they even asked if we were from Villa 30 So clearly they had received the request. They did not give a sh&t.\n\nThe air conditioning randomly turned off in the middle of the first night for our kids. The following night we sat there for over an hour watching a movie sweating in the heat while a guy on a ladder tried to figure out what it was, ultimately resetting the power for the entire room.\n\nThe tennis courts and spa totally booked other than noon during the day in the 40\u00b0 Singapore heat.. When we made initial reservation, no heads up that might be issues and advising us to book in advance.\n\nNo dishes in the room at all. Mini bar has nothing other than filtered water And it was tepid and not cold.No cutlery. Coffee station had four pods, we used two on the first day and on the second day they weren\u2019t replaced in our $1400 a night room. When we asked for dishes for the food we had delivered, it took 45 minutes by which time we had already eaten.\n\nThe power cord between the wall and the main lamp was snapped in half. They took it away and never returned. The randomly empty cupboards had doors that were broken and bent and crooked. Zero level of attention to detail at this price point.\n\nThis is apathetic disinterested Singapore service at its worst. Even when the service desk called to ask if everything was wonderful and I told him it was complete rubbish, the guy laughed nervously as he didn\u2019t really know what to do. We booked a staycation for a change of scenery/relaxation and to get away, and this experience was complete garbage and a waste of money.","rating":1,"luggage":3.0,"highTouch":3.0,"availability":2.6,"competency":null,"attitude":1.0},{"review":"Celebrated husband's birthday and mother's day, we enjoyed the whole experience.\n\nA warm welcome and seamless check-in, staff are friendly.\n\nClean, large, modern and nicely furnished rooms. Love the amenities. Bed and pillows was very comfortable. Thanks to housekeeping, room was well set up with bed guards for my toddler whom sleeps with us. The service was impeccable, with the turn down service in the evening, the best I have experienced.\n\nI would like to express my thanks and appreciation for the service and care we received during the stay. We are glad that we got a chance to experience them, which was so perfectly managed and with such a great, polite and helpful staff.\n\nShout out to Chef Rayn whom came out to check on my child's pancakes, my toddler is a fussy eater and Chef gave us few good tips. Warm guest service from Mr Viknesh, Ms Kenny and team from The Knolls Restaurant are just amazingly awesome!  Breakfast menu spread was of good variety and quality.\n\nRomantic birthday dinner set up at The Knolls restaurant was wonderful, food was delicious.\n\nPool staff Thera, he is friendly and helpful.\n\nDownside express check-out was a miss. My toddler fell sick during the stay, we waited for more than 30 minutes for the luggage to be picked up as requested through concierge and via digital message. But there was no response for the luggage to be picked up. We have to take a detour, pushing the luggage, there was slight inconvenience.\n\nBut overall we enjoyed our stay and celebrations. Once again, Thank you for such welcoming and warm service, we will definitely be back for staycation & the food!","rating":5,"luggage":3.4,"highTouch":5.0,"availability":4.5,"competency":5.0,"attitude":4.7},{"review":"Come here if you want pamper yourselves and be pampered. The moment you arrive, you are greeted warmly by Shivan. The check in was seamless and the welcome drink was a very nice touch.\n\nThe villa was beautifully appointed. Everyone on the property provided exceptional service from the arrival by Shivan, the reception Hajar who processed the check in and bellman Karan who assisted with the luggage and gave us a buggy ride.\n\nBreakfast at the knolls quality and service rendered by jiwoo was also impeccable.\n\nClaire, Murni, Selva and Darren at Bobs bar carried the same exceptional service. The bars atmosphere in the evening is one not to be missed while chilling and having amazing cocktails that they serve.\n\nNothing was ever too much and everyone goes out of their way to ensure that you have an amazing stay experience from arrival to departure.\n\nEasily the best property on Sentosa, hands down and will definitely be back. Can\u2019t wait.","rating":5,"luggage":5.0,"highTouch":5.0,"availability":4.0,"competency":5.0,"attitude":4.0},{"review":"Everything was seamless, from the reservation process to check out. Cindy and Gracia from reservations was very helpful to assist me to amend my stay dates.\n\nMy check-in was very quick and was served the welcome drink by Jeff. Peggy did my registration and Wonkyu done a great job explaining the hotel facilities for me and showing me to the room. Appreciate the help of Steve as my luggage was delivered even before i stepped in to the room! There were several activities provided by Capella and I took part in the boba and cocktail making as well as the canvas painting. You can bring the canvas home as well! My partner and I totally had fun!\n\nAs it was my partner's birthday, the culturist team kindly arranged a cake for my partner. I would like to thank Nuurul as she helped me with the room set up.\n\nWe loved the complimentary tea time at the Living Room daily from 3-5pm. Wilbur and Eric was serving me and they noticed that I love the egg tarts. Without me asking, they provided me with extra two tarts. Wow!\n\nThank god it wasnt raining so much during our stay. We managed to use the pool and enjoy the peace and tranquillity. Kalai's service was superb.\n\nDinner at Knolls and Bar was amazing and the chicken parmigiana is a must try item!!\nIt is nice to be seated outdoor, enjoy the breeze and view of the pool. Nura, Anne, Murni, Darren, Natasha and Selva - From Knolls to Bob's Bar - Thanks to them as well for recommending the dishes, romantic set up and arranging the dessert for my partner.\n\nAfter we came back from dinner, Thana from Housekeeping prepared romantic turndown service as well. Thats so sweet of him!\n\nDuring midnight, I ordered room service. The choice of food is limited but delicious. Thanks to Suveen for recommending the liguine bolognese with wagyu beef and Eikman for serving. It was the best bolognese ever!\n\nCapella's breakfast items are delicious and they have a lot of variety. The laksa and prata is my favourite from the breakfast. You can also see the peacocks roaming around the breakfast area. A great start to the day! During breakfast, the staffs checked on us to ensure that the all is well. Thank you Lai Yong, Canny, Jiwoo and Kalai for the amazing service during breakfast.\n\nI opted for express check out and it was a fast process. Taufiq verified the charges with me through the phone and rendered luggage assistance. He even reminded us to check the safe, making sure we dont leave anything behind.\n\nI have just checked out and already thinking of coming back! The place is beautiful but what makes it special is the staffs there. All of them are friendly and I enjoyed communicating with them! Looking forward to be back! Thank you again Capella team!","rating":5,"luggage":3.8,"highTouch":3.7,"availability":3.6,"competency":3.6,"attitude":4.5},{"review":"My luggage didn't arrive to my room for 30+ minutes and when I called the front, they had forgotten to send my luggage. The villa they gave me was right across from a massive construction site so since my check-in at 3pm, I couldn't open my balcony doors because the noise was so loud. I had to request to transfer to another villa, but had to wait for 1-2 hours so couldn't make any plans to go hangout around the island area. And the first villa room arranged for me had a half used shampoo bottle with its cap opened. I suggest you to check the location of the villa when they assign you one so you don't have to waste your time.\nThe service in the main pool area was very poor and was not accounted for. the pool itself is very nice, but the bells placed in each beach table was useless. I went to the pool 2 times. Once in the morning and once in the afternoon. In the morning, I had to wait 20-30 minutes after pressing the bell and I had to call the main lobby via my cell phone to get someone to bring a towel and some drinks. In the afternoon, I was at the lowest floor of the pool for some quiet swimming time. I kept pressing the bell to get some towel and something to drink, but gave up after waiting for 30 minutes or so. It was a bit far down from the main floor so I couldn't bother to go all the way up to ask for a drink and come back down for swimming. I suggest you bring some drink from your room or make sure you let someone know you will be in a specific seat so you don't have to worry about getting thirsty.","rating":1,"luggage":3.0,"highTouch":null,"availability":2.0,"competency":null,"attitude":5.0},{"review":"14. Bell boy volunteered to bring our luggage to our room on first day. On last day, no one came or offer to bring our luggage to lobby. One staff came to deliver invoice to us. The speed which he arrived was much faster than housekeeping, maybe becos it\u2019s money related. He left seeing our luggages on the cooridoor but didn\u2019t ask if we needed help. Its no big deal shifting our own luggages but jus disappointed that they did t bother to leave a good impression.\n","rating":1,"luggage":3.0,"highTouch":null,"availability":3.0,"competency":3.0,"attitude":null},{"review":"Stayed a night to celebrate wedding anniversary which we received 3 macarons as a gesture of goodwill from the hotel... I have stayed at the hotel approx 5 years ago and it was a fantastic experience then. I have to say that the hotel, at 10 years old is starting to show its age. The lift didn't work on the day I checked out (and had to drag my luggage from the 5th floor down), the stainless panels covering the side of the lift (5th level, near room 520) was falling off.\n\nOther than that, the breakfast at the Knolls was fantastic and the staffs were excellent. Special call out to Kenny who was very attentive and made sure everything was in order. She also surprised us with a nice cake upon hearing our anniversary celebration which was a total surprise.\n\nOverall, it's an excellent hotel. It's very exclusive which was what I liked. I hope the hotel will pay more attention to the details and up keeping given it's a 6 star hotel in my view.","rating":4,"luggage":3.0,"highTouch":4.0,"availability":5.0,"competency":5.0,"attitude":5.0},{"review":"To GM of Capella.... Well done! You have an amazing team!\nLet me first say my thanks to a few staffs.\n-The bellmen who received us and our luggage was taken care of.\n-The reception girl who insist for us to have a seat and registered us from the sofa area.\n-The culturist team who had pre liaise with my husband, Hajar who did not tell my husband exactly what she had planned but the plan was amazing. She had our room decorated, notes and congratulation cards and snacks. Kids welcome gifts (Colouring set)\n-The culturist team (Malay guy) who presented the flower bouquet to my husband for him to present it to me. He also assisted us to our room and room explanation.\n-The lady in kebaya for presenting the welcome drinks with such warmth.","rating":5,"luggage":5.0,"highTouch":5.0,"availability":5.0,"competency":null,"attitude":5.0},{"review":"I had a friend suggest this hotel to me. I stayed two nights with another guest in the garden view room.\n\nFrom the moment we stepped off our taxi, everything was perfect. We were greeted promptly, our luggage taken and we were escorted to the check-in desk; the entire process was quick and flawless.\n\nThe room; beautifully decorated, clean, windows that brighten the room, comfortable bedding and really lovely overall. I was not a fan of the doorless shower, but wasn't too big of an issue. There is also a tablet used to control the curtains and lighting, very modern, but took some time to get use to which switch was which.\n\nService; impeccable. Even the simple \"good morning\" from each staff we passed was very sweet and kind. Theres not much more to say, other than we really felt like valued guests.\n\nPool; peaceful. There are three levels, each with their own purpose. One for adults, one for family, and I believe the last is a longer but smaller pool for swimming laps? They were surrounded by trees, and were really beautiful to be in.\n\nHighly recommend this hotel.","rating":5,"luggage":5.0,"highTouch":null,"availability":5.0,"competency":null,"attitude":5.0},{"review":"Capella absolutely lives up to its official description of an ultra-luxury resort in Sentosa in all aspects.\n\nThe hotel pampers its guests from the moment of arrival to departure. The check-in process was absolutely seamless with a warm welcome upon arrival. Guests just need to provide an identification document, chill at the couch and enjoy a refreshing welcome drink whilst the great Capella team handles everything else. You will be then be led to the room with a detailed orientatation of the hotel landscape, facilities and room amenities. Luggages were sent to the room almost concurrently, housekeeping was prompt in fulfilling requests, and the turndown service was thoughtfully carried out. Check out was again prompt and fuss free.\n\nThe hotel premises was a tranquil sanctuary with its lush greenery and seaview setting, making it felt like a vacation rather than a staycation. The spacious rooms were tastefully designed with a level of detail in the housekeeping standards. Culinary skills were a cut above the rest at Cassia (warrants a separate review on its own) and the Knolls. Again, service team were sincere and attentive at both food establishments.\n\nIt was a delightful experience at Capella, and totally worth the premium one pays for. Capella management and team, do keep up with the excellent work! Thank you and till the next stay.","rating":5,"luggage":5.0,"highTouch":4.0,"availability":5.0,"competency":5.0,"attitude":5.0},{"review":"i had the pleasure of staying here during a short visit to Singapore. the hotel is absolutely stunning: from the arrival (which is flawless), to the check-in, the room and hotel facilities - all is absolutely stunning. I got escorted right after a quick check-in to the room where the luggage was already waiting for me. the rooms are amazing, Bose soundsystems, great bathroom and shower, balcony and amenities. The Chinese restaurant is stunning with attentive service and amazing cantonese food. Breakfast had all you could ever want with attentive service and frequent checks if anything further was needed. The Bar looked amazing, though I didn't have the chance to visit it. I look forward to come back soon.","rating":5,"luggage":5.0,"highTouch":null,"availability":4.5,"competency":5.0,"attitude":null},{"review":"We had been looking forward to staying at the Capella, not least for its fabulous location and reported apparent service levels. We left after a three day year end break sadly disappointed. But first let's be positive, it is the New Year. The location, well a gem and full of history. A haven of tranquility in a sea of high finance. Our room spacious and overlooking the South China Sea...and kept immaculatetly by An. The breakfast was good, but the many of the serving staff unable to raise even a gentle smile...grrrr. So much for the good....it was the niggles that were far from a five star standard expected from the top Asian hotels. We arrived after a long flight from London. The welcome was polite, but why no cooling drink or physical presence of the front desk manager...it is the personal touches that matter. I had prepaid via Leading Hotels of the World...and the hit to my credit card not for the faint hearted. So what followed was unacceptable. It took not one, nor two but three calls to the front desk to ask for our luggage. It took an hour for them to be carried no more that 50 yards and a flight of stairs. We were desparate to change after the long flight. Then no room service directory...again an hour for it to be delivered. It is fine to have personal assistants to care for clients needs...They are though no subsitute to the knowledgable old fashioned Concierge. Others have spoken of the little things that matter. Indeed, and I am prepared to overlook that the personal assistants failing to notice that it was my birthday. What I am not prepared to overlook is that my daughter called from the UK for 10 minutes to organise a birthday cake and message. Nothing materialised and in fact the hotel then denied knowledge of the call. This is unacceptable. I could go on about the 450 odd dollar error on my bill for some wine that was charged to the wrong room, how it was not possible to enjoy a cocktail over lunch until 12.30...enough. I have read and re read many of the reviews and wonder if I was staying in the same hotel. Most appeared to come from locals...perhaps I am mistaken, but I certainly have the feeling that overseas visitors do not receive the same level of welcome. Would I return to the Capella Singapore, sadly no.","rating":3,"luggage":3.0,"highTouch":4.0,"availability":3.5,"competency":3.5,"attitude":5.0},{"review":"Heard so much about Capella and when i finally arrived, i was with high expectation for this luxury hotel. After my stay however, I do not think i would recommend my friends to stay in this hotel with the price it's asking.\n\nThe room is spacious, the view is great looking out to the South China Sea ( with cargo ships) but it is not stunning, when compared to other resorts in Asia. The furniture inside the room seemed to be a bit tired, and may need better maintenance. The faucet is hot handy at all, the carpet is quite old and dirty, the chair is not so comfy. Neither any of these are major issues but when many little things add up, it can ruin your most perfect stay.\n\nAnd then it's the service. Upon arrival,my friends and i checked in and since my friend's villa wasn't ready yet so i headed up to my room first while she waits. After a while, i heard a door bell, and at the door the guys at the door was with my friends' luggage. i told the guy that it was not mine and it belonged to another guest. I told him it was intended for Ms. X who just checked in, you can send it to her room. Then the strangest thing happened. He asked if i know her room number and i said i dont. (in fact i didnt even know if she got her room or not). After that, though i refused several times, he insisted that i make a call to the front desk and ask which room she was in. For a true luxury hotel, i would not imagine that anyone would insist, troubling its clients, to rectify a mistake you make. It's just very strange to me.","rating":3,"luggage":3.0,"highTouch":null,"availability":3.0,"competency":1.0,"attitude":null},{"review":"My family of four stayed at Capella for a one-night stop-over whilst flying from Heathrow, London to Melbourne, Australia. We found the rooms and grounds to be outstanding. The pools are large, clean and a choice of the 'family pool' or 'adult pool' will ensure that your needs are met. There were large blow-up pool toys available in the 'family pool' to entertain the kids. The Pool Attendant (Jani) referred to me by name each time he saw me which was welcoming and complimentary drinks were supplied poolside. Towels were available for use and the pool changerooms were large and well appointed. Upon check-in, a clarification of our room requirements was sorted quickly with a change from a King Room to a Twin Room. Our room was classy with fully automated blinds, terrific sound system and TV and comfortable beds/bedding. The Executive Assistant Manager for Rooms (John) ensured our stay was relaxing and all our expectations met. In fact, the overall service we received from the Capella staff was first class. The concierge ensured our luggage was secured and we were offered the use of the pool and changerooms even after check-out so we could fill in time before our flight home. Capella is situated close to Siloso Beach, the Merlion and Resorts World/Universal Studios. We'll definitely be back to stay longer, however as a stop-over option, Capella should definitely be considered.","rating":4,"luggage":3.0,"highTouch":3.0,"availability":3.0,"competency":null,"attitude":3.0},{"review":"We just concluded our 3d2n at Capella. We had booked a 1 bedroom villa with a small pool. I had wanted to stay in Capella for the longest time! And finally got my wishes granted as it was my birthday! The pool is well shaded, perfect for our toddler. They also gave premium baby toiletries. The cot is also clean and well setup with bumpers. I called the personal assistant for some pool toys and they sent a few to our room. They also did up our room as it was my birthday with rose petals on the bed forming the words \"Happy Birthday\" and a rose petal bath. However according to my hubby, he had to pay them a fee for such arrangement. Some staff are very attentive, such as a lady who brought my son some balloons when she noticed him gasping at other kids' balloons. There is also another lady who remember he likes a particular type of cookies during a canvas painting session and brought a box of it to our room. We are very appreciative of such kind gestures. Breakfast variety is quite limited but good quality. The prata and laksa are must try! I don't taste such good prata anywhere else.\nThere were some misses which I hope the hotel will take note though. On the day we arrived, nobody came and helped us with the luggages. It was not crowded at the lobby. Also, I was carrying my toddler, and the staff told me to wait inside, then he walked away! No help given to open the door, it was quite a narrow and heavy door so any help will be appreciated! In the room, there were complimentary drinks in the mini bar, and we noticed there was a bottle of sparkling water half consumed. Eww luckily I did not drink it! Once when I called housekeeping to clear the dishes from in room dining, it was not cleared even after we were out the entire night. There was also once I called them to clear the tables, they came and cleared the bottles, but did not replace the used glasses. Probably the guests are expected to clean their used glasses haha! For both breakfasts, the baby chairs given were dirty. First time I requested the staff to help clean. Second time I just cleaned it myself (gave up). It's really not so much of a big deal, it's just not what I would expect for what I thought to be the most premium hotel in Singapore.\nOverall, it is a memorable and enjoyable stay. I may even return in future! I recommend this hotel, however you must not come to this hotel with expectations, and you will definitely enjoy it better.","rating":4,"luggage":3.0,"highTouch":3.0,"availability":2.7,"competency":3.0,"attitude":3.0},{"review":"Once we found our room, we were disappointed to discover that we had not been upgraded like we had been told at check-in. Ok, we were getting the room we had paid for which wasn\u2019t a problem however the hotel had raised expectations earlier in the day, had they not done this we would have been more than happy with the room. The room was lovely, with a great view of the South China Sea. A few things were missing from the room - hand towels and an information card mentioned inspect repellant, which didn\u2019t appear to be in the room. We went to reception to ask for hand towels, inspect repellant and to ask about breakfast, universal tickets, the hotel facilities and to relay our disappointment about being told we were going to be upgraded to only then take it away (it was the principle). We were offered the upgrade to the suite on our second night but even that was a hassle. The room was late in being ready, advised it would be ready once we returned from a trip and our luggage would be waiting in the new room. Once we returned the room was not ready, waited over an hour before it was ready and arrived in the room to find that our luggage was not there. Chased for the luggage, went for a walk and returned to find it had still not been delivered. Ended up going to reception and bringing it up ourselves.\n","rating":3,"luggage":2.0,"highTouch":null,"availability":2.3,"competency":3.0,"attitude":null},{"review":"We tried out Capella for the first time but we did not find any convincing reason to choose Capella over other hotels with additional cost. My recommendations to fellow travelers and staycationers for better return on investment than Capella are:\n- The Raffles Hotel if you want the best service in Singapore or if you like Colonial architecture. The Raffles Hotel is 10 times better in terms of the service.\n- Shangri-La Rasa Sentosa if you are looking for beach resort type of experience or ocean view.\n- Shangri-La in Orchard, Four Seasons, Swissotel, Fairmont, Ritz-Carlton, Mandarine Oriental, Pan Pacific, Resort World Sentosa if you want a modern 5-star facility.\n\nI was impressed by the building, view and the room but disappointed by the unprofessional porter service and the management that lack follow-ups on customer satisfaction. So if you have stayed in one of the hotels listed above in Singapore, chances are good you feel it is not worth the price.\n\n1. Took 4 hours to deliver the luggages to the room because they lost our luggages. Our bathing suits and diapers for our baby were in the luggages. By the time the luggages were delivered, the sun was setting so we had to give up using the swimming pool on the first day.\n2. The porter who delivered the luggages had an attitude like a part-time student. He apologized but not sympathetic or sincere. He sounded tired and stressed.\n4. Having ruined the afternoon, the Personal Assistants and the Front Desk had no intention to make it up for our frustration. I feel their business-as-usual apologies with no emotion over the phone were useless. An example of how frustrating experience can be handled differently; The Mandarine Oriental Hotel Singapore upgraded us to Suite when they took 5 hours to complete check-in due to computer system trouble. Capella lacks such follow-ups. Lack of follow-up was the greatest disappointment with Capella because other good hotels try harder to manage customer's satisfaction. Capella style is to post copy&paste apologies online instead of following up on the situation on site.\n5. Breakfast experience should be improved. It was a little hectic and overcrowded. Fewer choice of food compared to other 5-stars. Egg Station was overloaded and customers were not treated well there. Waiters/waitresses were good, though. Some of the tables set outside in front of the entrance was not great so they should expand the breakfast area if they want to compete with other 5-stars.\n\nBright side of the hotel was dining. Food at Cassia, Knoll and Bob's Bar were\ngood. Staffs at Bob's Bar were especially good service. Enjoyed adternoon service at the Library as well. But I expect nothing less for the price they are charging.","rating":3,"luggage":2.0,"highTouch":4.0,"availability":3.2,"competency":2.5,"attitude":3.0},{"review":"I booked a one-bedroom villa for 3 nights thinking to spend quality time with my kids. When we reached hotel, they \"upgraded\" us to a room which faces the sea. I declined the offer as I don't need the sea view with young kids but the plunge pool that comes with a villa. That's the reason why I booked a villa! The hotel was unable to give me my villa as they were overbooked! Finally with all back and forth I had to stay in the room for one night before I could move to my villa. I can't believe the hotel can be so inconsiderate - a villa can't be upgraded to a room as they are totally different serving different needs esp without me agreeing !!!\n\nTo make it worse, my luggage went missing when I finally got to my villa. I had to scream before my luggage was delivered. Buggy service to and from villa has long wait like 20 min. Lights and curtains in living room didn't function properly...\n\nConclusion I regret spending my vacation at this hotel","rating":1,"luggage":2.0,"highTouch":null,"availability":2.0,"competency":null,"attitude":null},{"review":"First stay at Capella was when it first opened and the experience then was excellent. Only complaint was the limited choices for their dining menus especially given the resort setting and people may not leave the grounds throughout their stay. However the Capella is no longer worth the price.\nExpectations were high when I returned to stay in their villas once again. I was greeted by mould in the shower stall and ants in the room.\nOur package included breakfast at the Knolls. During breakfast on the third day of our stay, we were asked what we would like for our main breakfast dish. We were taken aback since we only had the limited dishes that were already set out to choose from the day before. We did notice the manager was not present the day before, perhaps that was reason for the \"difference\".\nWe had asked to buy their chilli sauce offered at the Knolls and the oatmeal cookies offered during tea time and both times we were told they would get back to us. They never did.\nThere were thunderstorms during our stay. No one had come to cover up the seat cushions set out next to the plunge pool. They were soaked so we couldn't sit on them when the sun came out.\nShortly before we had to leave to catch our flight, we called for the buggy service to come pick up our suitcases from the villa which was some distance away from the main building. We then walked to the main building to check out first as we were in a hurry. After we completed checking out, we asked if our luggage had arrived. They looked confused and scrambled around to check whether anyone had ever gone to our villa. Apparently no one got the message. It was at least 10 minutes after we had checked out that we saw a person drive off in a buggy and another 10 before our luggage came. All this time, the meter of cab they had ordered for us kept on running. Without any apologies, they loaded our luggage and we left.\nThey do have Tempur pillows and sleep quality is excellent.\nFood was above average.\nGrounds are still beautiful and peaceful with peacock families roaming.\nI had returned to Singapore many times since, but I did not return to the Capella. For the price paid, I would have expected top notch service...\nOur stay was in March 2013, hardly high season..","rating":2,"luggage":2.6,"highTouch":3.0,"availability":2.4,"competency":2.3,"attitude":null}];
+const REVIEWS=[{"hotel":"Capella","review":"Capella Singapore is truly a honeymoon we will remember for a lifetime.\nMy husband and I stayed at Capella Singapore for our honeymoon and it turned out to be one of the best decisions of our lives. From the moment we arrived until the moment we left, every detail, every interaction and every experience felt thoughtful, personal and genuinely heartfelt. This was not just a luxury stay, it was an emotional and unforgettable journey.\nWhat truly sets Capella apart is its people. The warmth, professionalism and sincerity of the team elevated every moment of our stay into something extraordinary.\nElton and Boon from the Bell Team were our first touchpoint with Capella and they immediately set the tone for what became a flawless experience. Their attentiveness, efficiency and calm confidence made us feel welcomed and taken care of from the very start. Their hospitality was subtle, polished and deeply reassuring.\nCapella Singapore is not just a destination. It is a place of warmth, elegance and outstanding hospitality.","rating":5,"luggage":4.0,"highTouch":4.1,"availability":5.0,"competency":3.0,"attitude":3.5},{"hotel":"Capella","review":"The villa itself was stunning, impeccably maintained, and designed with such care that we felt both spoiled and at home at the same time. The lush grounds and the serene atmosphere created the perfect backdrop for our family holiday. Our children were made to feel just as welcome as the adults, which made the stay effortless and joyful for us as parents.\n\nEqually important was the service. Every member of the team we encountered was not only highly professional but also genuinely warm and caring. From the housekeeping staff who anticipated our needs before we even mentioned them, to the concierge and culturists who went above and beyond to personalize our experience, we were consistently impressed. The seamless luggage transfer from our previous hotel and even the smallest gestures like a smile or a kind word were all noticed and deeply appreciated.","rating":5,"luggage":3.0,"highTouch":4.0,"availability":4.0,"competency":5.0,"attitude":4.0},{"hotel":"Capella","review":"This is my 3rd trip to The Capella. Where The Capella stands out is it's service which is virtually flawless. From my initial interactions from Erin who checked me in, to Boone assisting me with my luggage, to Emily in the Living Room lounge - everyone I encountered was joyful, helpful, eager to please hence making incredible impressions. Many thanks to Mohamad Ezaz Ismil the manager of guest services for handling all the arrangements for the trip and making me feel so welcomed. This is a truly special place.","rating":5,"luggage":5.0,"highTouch":3.7,"availability":4.0,"competency":null,"attitude":5.0},{"hotel":"Capella","review":"Capella Singapore is surprisingly captivating. The room is luxurious & warmly appointed. The view of the sunrise from the room is so magical, the peacock living in the hotel made it even more mythical.\n\nMs. Sun Yan, the housekeeping provided an outstanding service, never say no to any requests & greeted us with warm smile every time we met. Special thanks to the night manager who helped resolve luggage incident just in time prior to my departure.\n\nCan't wait to revisit & Capella Singapore has a special place in my heart.","rating":5,"luggage":3.0,"highTouch":2.0,"availability":3.0,"competency":3.0,"attitude":4.3},{"hotel":"Capella","review":"Prior to my arrival, I have exchanged emails with Adie, Artiqah, Bevan, Cheryl, Intan, Lyn, Noelle and they have been very helpful and patient with me as I carefully plan my proposal stay.\n\nUpon our arrival, we were assisted by Kenneth, who is an absolute star. He immediately recognised me through the notes in the system, kept everything a secret as instructed and ran through the check-in process very swiftly. We were also served a pair of welcome drinks and it tastes really good!\n\nOverall, everyone has been very friendly and polite. My partner and I enjoyed our stay thoroughly!","rating":5,"luggage":3.0,"highTouch":3.7,"availability":3.4,"competency":3.0,"attitude":5.0},{"hotel":"Capella","review":"We have visited many hotels but none like the Capella Singapore. The team really take note of the guests' every detail to ensure the guests really enjoy their stay. Kudos to the management and team for making our 26th wedding anniversary a special, memorable and unforgettable one.\n\nSpecial thanks to Cloris for your call 3 days before our arrival. Thank you Capella Singapore. All of you have made our stay so memorable and unforgettable.","rating":5,"luggage":3.4,"highTouch":3.4,"availability":3.0,"competency":4.0,"attitude":3.0},{"hotel":"Capella","review":"The entire Capella experience is extraordinary and much recommended. The main draw I would say is the exceptional service. It began with arrival, we were well taken care of at check-in with drinks provided and complimentary valet parking and luggage service. The most memorable memory would be the rose petals lined floor and bed, pre-made bubble bath with rose petals, and even a filled ice bucket waiting for us after our spa and dinner. That was the most touching moment a hotel could have provided. Kudos to Capella.","rating":5,"luggage":4.0,"highTouch":3.7,"availability":4.0,"competency":null,"attitude":3.0},{"hotel":"Capella","review":"Check In – I arrived to an empty lobby at 10:30am on a weekday and was offered assistance for my luggage when I stepped off. Already a great impression. I was invited to be seated while they took my ID and credit card and soon after, a staff brought me through my reservation details - all complete in less than 10mins.\n\nService – Capella service is phenomenal. There is something about their stealthy way of using their comms to inform each other of your last name so you are almost addressed by your last name. Every single staff you pass by greets you. Housekeeping staff brings requested items in a basket and places them personally instead of just handing them over at the door.","rating":5,"luggage":2.0,"highTouch":3.3,"availability":3.7,"competency":2.0,"attitude":5.0},{"hotel":"Capella","review":"For the price, the food and service were shockingly bad. Zero communication among the team(s), i cannot convey what a sad waste of money this was.\n\nCheck in was clumsy. We were sat in a small drab room and left to sit for more than 20 minutes. Took our own luggage out of car to hand to porters.\n\nIt became a running joke with the children that you had to order a buggy 20 minutes in advance, and even then often they never came. This is apathetic disinterested Singapore service at its worst.","rating":1,"luggage":3.0,"highTouch":3.0,"availability":2.6,"competency":null,"attitude":1.0},{"hotel":"Capella","review":"Celebrated husband's birthday and mother's day, we enjoyed the whole experience. A warm welcome and seamless check-in, staff are friendly. The service was impeccable, with the turn down service in the evening, the best I have experienced.\n\nDownside express check-out was a miss. We waited for more than 30 minutes for the luggage to be picked up. We have to take a detour, pushing the luggage, there was slight inconvenience.\n\nBut overall we enjoyed our stay and celebrations. We will definitely be back!","rating":5,"luggage":3.4,"highTouch":5.0,"availability":4.5,"competency":5.0,"attitude":4.7},{"hotel":"Capella","review":"Come here if you want to be pampered. The moment you arrive, you are greeted warmly by Shivan. The check in was seamless and the welcome drink was a very nice touch.\n\nThe villa was beautifully appointed. Everyone on the property provided exceptional service from the arrival by Shivan, the reception Hajar who processed the check in and bellman Karan who assisted with the luggage and gave us a buggy ride.\n\nNothing was ever too much and everyone goes out of their way to ensure that you have an amazing stay experience from arrival to departure. Easily the best property on Sentosa, hands down.","rating":5,"luggage":5.0,"highTouch":5.0,"availability":4.0,"competency":5.0,"attitude":4.0},{"hotel":"Capella","review":"Everything was seamless, from the reservation process to check out. My check-in was very quick and I was served the welcome drink by Jeff. Appreciate the help of Steve as my luggage was delivered even before I stepped in to the room! \n\nWe loved the complimentary tea time at the Living Room daily from 3-5pm. Wilbur and Eric noticed that I love the egg tarts. Without me asking, they provided me with extra two tarts. Wow!\n\nI have just checked out and already thinking of coming back! The place is beautiful but what makes it special is the staff.","rating":5,"luggage":3.8,"highTouch":3.7,"availability":3.6,"competency":3.6,"attitude":4.5},{"hotel":"Capella","review":"My luggage didn't arrive to my room for 30+ minutes and when I called the front, they had forgotten to send my luggage. The villa they gave me was right across from a massive construction site so I couldn't open my balcony doors because the noise was so loud. I had to request to transfer to another villa, but had to wait for 1-2 hours. The service in the main pool area was very poor. I had to wait 20-30 minutes after pressing the bell and had to call the main lobby via my cell phone to get someone to bring a towel and some drinks.","rating":1,"luggage":3.0,"highTouch":null,"availability":2.0,"competency":null,"attitude":5.0},{"hotel":"Capella","review":"Bell boy volunteered to bring our luggage to our room on first day. On last day, no one came or offered to bring our luggage to lobby. One staff came to deliver invoice to us. He left seeing our luggages on the corridor but didn't ask if we needed help. Just disappointed that they didn't bother to leave a good impression.","rating":1,"luggage":3.0,"highTouch":null,"availability":3.0,"competency":3.0,"attitude":null},{"hotel":"Capella","review":"Stayed a night to celebrate wedding anniversary. I have to say that the hotel, at 10 years old is starting to show its age. The lift didn't work on the day I checked out and had to drag my luggage from the 5th floor down.\n\nOther than that, the breakfast at the Knolls was fantastic and the staffs were excellent. Special call out to Kenny who was very attentive and made sure everything was in order. She also surprised us with a nice cake upon hearing our anniversary celebration.\n\nOverall, it's an excellent hotel. It's very exclusive which was what I liked.","rating":4,"luggage":3.0,"highTouch":4.0,"availability":5.0,"competency":5.0,"attitude":5.0},{"hotel":"Capella","review":"To GM of Capella.... Well done! You have an amazing team!\nThe bellmen who received us - our luggage was taken care of.\nThe reception girl who insisted for us to have a seat and registered us from the sofa area.\nThe culturist team who had pre-liaised with my husband and decorated our room with congratulation cards and snacks.\nThe lady in kebaya for presenting the welcome drinks with such warmth.","rating":5,"luggage":5.0,"highTouch":5.0,"availability":5.0,"competency":null,"attitude":5.0},{"hotel":"Capella","review":"I had a friend suggest this hotel to me. I stayed two nights with another guest in the garden view room.\n\nFrom the moment we stepped off our taxi, everything was perfect. We were greeted promptly, our luggage taken and we were escorted to the check-in desk; the entire process was quick and flawless.\n\nService; impeccable. Even the simple 'good morning' from each staff we passed was very sweet and kind. We really felt like valued guests.\n\nHighly recommend this hotel.","rating":5,"luggage":5.0,"highTouch":null,"availability":5.0,"competency":null,"attitude":5.0},{"hotel":"Capella","review":"Capella absolutely lives up to its official description of an ultra-luxury resort in Sentosa in all aspects. The check-in process was absolutely seamless with a warm welcome upon arrival. Guests just need to provide an identification document, chill at the couch and enjoy a refreshing welcome drink whilst the great Capella team handles everything else. Luggages were sent to the room almost concurrently, housekeeping was prompt in fulfilling requests, and the turndown service was thoughtfully carried out.\n\nIt was a delightful experience at Capella, and totally worth the premium one pays for.","rating":5,"luggage":5.0,"highTouch":4.0,"availability":5.0,"competency":5.0,"attitude":5.0},{"hotel":"Capella","review":"I had the pleasure of staying here during a short visit to Singapore. The hotel is absolutely stunning: from the arrival (which is flawless), to the check-in, the room and hotel facilities. I got escorted right after a quick check-in to the room where the luggage was already waiting for me. The Chinese restaurant is stunning with attentive service and amazing Cantonese food. Breakfast had all you could ever want with attentive service and frequent checks if anything further was needed.","rating":5,"luggage":5.0,"highTouch":null,"availability":4.5,"competency":5.0,"attitude":null},{"hotel":"Capella","review":"We had been looking forward to staying at the Capella. We left after a three day year end break sadly disappointed. It took not one, nor two but three calls to the front desk to ask for our luggage. It took an hour for them to be carried no more that 50 yards and a flight of stairs. We were desperate to change after the long flight.\n\nI have the feeling that overseas visitors do not receive the same level of welcome. Would I return to the Capella Singapore, sadly no.","rating":3,"luggage":3.0,"highTouch":4.0,"availability":3.5,"competency":3.5,"attitude":5.0},{"hotel":"Capella","review":"Heard so much about Capella and when I finally arrived, I was with high expectation for this luxury hotel. After my stay however, I do not think I would recommend my friends to stay here with the price it's asking.\n\nUpon arrival, a porter insisted that I make a call to the front desk and ask which room a misdelivered bag belonged to. For a true luxury hotel, I would not imagine that anyone would insist, troubling its clients, to rectify a mistake you make. It's just very strange to me.","rating":3,"luggage":3.0,"highTouch":null,"availability":3.0,"competency":1.0,"attitude":null},{"hotel":"Capella","review":"My family of four stayed at Capella for a one-night stop-over. We found the rooms and grounds to be outstanding. The Pool Attendant referred to me by name each time he saw me which was welcoming and complimentary drinks were supplied poolside. The overall service we received from the Capella staff was first class. The concierge ensured our luggage was secured and we were offered the use of the pool and changerooms even after check-out. We'll definitely be back to stay longer.","rating":4,"luggage":3.0,"highTouch":3.0,"availability":3.0,"competency":null,"attitude":3.0},{"hotel":"Capella","review":"We just concluded our 3d2n at Capella. On the day we arrived, nobody came and helped us with the luggages. It was not crowded at the lobby. Also, I was carrying my toddler, and the staff told me to wait inside, then he walked away! No help given to open the door.\n\nOverall, it is a memorable and enjoyable stay. I may even return in future! I recommend this hotel, however you must not come here with expectations, and you will definitely enjoy it better.","rating":4,"luggage":3.0,"highTouch":3.0,"availability":2.7,"competency":3.0,"attitude":3.0},{"hotel":"Capella","review":"Once we found our room, we were disappointed to discover that we had not been upgraded like we had been told at check-in. The room was late in being ready, and our luggage was not there when we arrived. Chased for the luggage, went for a walk and returned to find it had still not been delivered. Ended up going to reception and bringing it up ourselves.","rating":3,"luggage":2.0,"highTouch":null,"availability":2.3,"competency":3.0,"attitude":null},{"hotel":"Capella","review":"We tried out Capella for the first time but we did not find any convincing reason to choose Capella over other hotels. It took 4 hours to deliver the luggages to the room because they lost our luggages. Our bathing suits and diapers for our baby were in the luggages. The porter who delivered the luggages had an attitude like a part-time student. He apologized but not sympathetic or sincere. Capella style is to post copy-and-paste apologies online instead of following up on the situation on site.","rating":3,"luggage":2.0,"highTouch":4.0,"availability":3.2,"competency":2.5,"attitude":3.0},{"hotel":"Capella","review":"I booked a one-bedroom villa for 3 nights. When we reached hotel, they 'upgraded' us to a room. The hotel was unable to give me my villa as they were overbooked! To make it worse, my luggage went missing when I finally got to my villa. I had to scream before my luggage was delivered. Buggy service to and from villa has long wait like 20 min.\n\nConclusion: I regret spending my vacation at this hotel.","rating":1,"luggage":2.0,"highTouch":null,"availability":2.0,"competency":null,"attitude":null},{"hotel":"Capella","review":"Expectations were high when I returned to stay in their villas once again. I was greeted by mould in the shower stall and ants in the room. Shortly before we had to leave to catch our flight, we called for the buggy service to come pick up our suitcases. After we completed checking out, we asked if our luggage had arrived. They looked confused. Without any apologies, they loaded our luggage and we left. For the price paid, I would have expected top notch service.","rating":2,"luggage":2.6,"highTouch":3.0,"availability":2.4,"competency":2.3,"attitude":null},{"hotel":"Marina Bay Sands","review":"Kit the attendee knocked on my sister and I's door and immediately I knew the experience was going to be spectacular. He was warm and welcoming and helped stack my luggage since I have a bad back. If Marina Bay Sands had an employee of the month, I'd vouch for it to be him! I will be coming back!","rating":5,"luggage":5.0,"highTouch":4.5,"availability":5.0,"competency":4.5,"attitude":5.0},{"hotel":"Marina Bay Sands","review":"I'd like to give a big thank you to the luggage team at Marina Bay Sands Hotel, especially Ray, Imran, and Bennett. I accidentally left my phone in a taxi, and they immediately stepped in to help. They acted very quickly, coordinated with the taxi driver, and managed to locate and retrieve my phone within just one hour.","rating":5,"luggage":5.0,"highTouch":5.0,"availability":5.0,"competency":5.0,"attitude":5.0},{"hotel":"Marina Bay Sands","review":"Amazing place and hospitality second to none. Chris our porter was fantastic especially taking care of all our heavy luggage.","rating":5,"luggage":5.0,"highTouch":null,"availability":null,"competency":4.0,"attitude":4.5},{"hotel":"Marina Bay Sands","review":"We did not feel treated as if we were in a luxury hotel. The check-in was at 3pm but the room was available until almost 5pm, they let us use the pool area before getting our room but obviously our clothes and stuff were within our luggage they had already taken for keeping them, and the pool area was too crowded. Overall it was too pricey and I don't feel like it was worth it.","rating":4,"luggage":3.0,"highTouch":2.0,"availability":2.5,"competency":3.0,"attitude":3.0},{"hotel":"Marina Bay Sands","review":"Top marks to the welcome team (seamless transfer of luggage from taxi to luggage hold and then onto the rooms). Also very happy with room design though being on 3rd floor, balcony is noisy and showed road view rather than any garden by the bay view. For the price (over $32k), I would expect a quiet balcony with magnificent views.","rating":3,"luggage":5.0,"highTouch":3.0,"availability":3.5,"competency":3.5,"attitude":4.0},{"hotel":"Marina Bay Sands","review":"Coincided our stay with a trip to the theatre, so location was excellent. Room amazing. Every convenience you can think of and then more.\nHowever, the arrival experience was really disappointing. The lobby isn't really a lobby and is BUSY. No doorman to greet us and take luggage. Check-in times strictly adhered to, so don't turn up early. Our specified room wasn't ready even after check-in time so we were compensated with a free breakfast.","rating":3,"luggage":null,"highTouch":2.5,"availability":2.5,"competency":3.0,"attitude":3.0},{"hotel":"Marina Bay Sands","review":"We will certainly never stay here again. First impressions stick and MBS made a lasting impact with our arrival. Our luggage was whisked away and we entered without a greeting. Shockingly our next experience was a three row deep snaking queue to check in. Our wait was 50 mins, standing. Finally we got to our room eager to head out but another 45-minute wait began for our luggage. We called about its whereabouts twice and no one could tell us where it was.","rating":1,"luggage":2.0,"highTouch":1.0,"availability":1.0,"competency":1.5,"attitude":1.5},{"hotel":"Marina Bay Sands","review":"The CNY period is busy for everyone, but most luxury hotels find a way to manage. Not true for Marina Bay Sands. The check in experience has been appallingly bad. To not have a single seating area available for guests to wait in is absolutely unconscionable. My elderly parents were traveling with us, and we had to walk around for 30 minutes looking for a place to sit. Even after we made it to the rooms it was literally a 45 minute wait for our luggage.\n\nMarina Bay Sands ranks amongst the very bottom of my hotel experiences worldwide.","rating":2,"luggage":null,"highTouch":1.0,"availability":1.5,"competency":2.0,"attitude":2.0},{"hotel":"Marina Bay Sands","review":"We've just arrived and want to thank both DJ and Kit for having been incredibly welcoming and helpful. They assisted us with our luggage and took the time to show us all the room features. Excellent first impression and great service so far!","rating":5,"luggage":5.0,"highTouch":4.5,"availability":5.0,"competency":5.0,"attitude":5.0},{"hotel":"Marina Bay Sands","review":"It has been an awesome experience. Kit brought our luggage up to room and explained everything to us. We will definitely be returning.","rating":5,"luggage":5.0,"highTouch":4.0,"availability":5.0,"competency":4.5,"attitude":5.0},{"hotel":"Marina Bay Sands","review":"I had been dreaming of my honeymoon for so long, and Marina Bay Sands was always at the top of my list of places in Asia to celebrate this special time. Michelle Nguyen was the one who welcomed us, and her kindness truly touched our hearts. She noticed my heavy luggage and cared enough to check on me, even offering bath bombs and salts so I could relax after carrying it. On top of that, she surprised us with an upgrade to a higher floor with the most breathtaking view.","rating":5,"luggage":4.5,"highTouch":5.0,"availability":5.0,"competency":5.0,"attitude":5.0},{"hotel":"Marina Bay Sands","review":"Our recent stay at Marina Bay Sands Singapore was truly amazing. Traveling with seniors and two young kids isn't always easy, but the team at MBS made everything feel effortless from start to finish.\n\nWe were warmly greeted by Jan and Ian from the bellhop team, who handled our luggage with care. At check-in, Michelle Nguyen was incredibly thoughtful — she picked up on what we needed without us even saying a word. Huge thanks to her!","rating":5,"luggage":5.0,"highTouch":5.0,"availability":5.0,"competency":5.0,"attitude":5.0},{"hotel":"Raffles","review":"From the very moment we arrived at this elegant hotel we were greeted by the immaculately dressed doorman. Straight away we knew this was going to be a wonderful stay. He then escorted us to reception where we were again welcomed. Then escorted to our suite, The Rudyard Kipling, where our luggage was already there. Introduced to our butler who explained how to use the i-pad and complementary beverages. The butler service is available 24 hours.","rating":5,"luggage":5.0,"highTouch":5.0,"availability":5.0,"competency":5.0,"attitude":5.0},{"hotel":"Raffles","review":"Raffles hotel is truly captivating and beautiful. Door service and concierge was warm, friendly and helpful. Rooms were delightful and luxurious with yummy treats everyday. Butler service 10/10. Unfortunately breakfast was chaotic. Wait was long. Food quality dropped compared to previous visits. On checking out, took a while to even get our luggage collected. As we were in a rush we had to drag our bags up the stairs to the elevator. Truly disappointing.","rating":5,"luggage":2.5,"highTouch":4.5,"availability":3.5,"competency":4.0,"attitude":4.5},{"hotel":"Raffles","review":"We visited here on our honeymoon. It was our first trip to Singapore, and it was the best hotel. Not only was the room great, but there were staff members who could speak Japanese, and they were very flexible with luggage storage, pool use, shower use, etc. after check-out.","rating":5,"luggage":5.0,"highTouch":4.5,"availability":5.0,"competency":5.0,"attitude":5.0},{"hotel":"Raffles","review":"Having stayed at Raffles many years ago, the romance of this hotel was still in my memory. Sadly, from the start to finish I was left feeling rather deflated. Upon arrival at the hotel we had the doors opened as if we were just coming to take a photo. Eventually they realised that I was checking in. The door staff spend all of their time around the tourists and visitors to the hotel; they have no memory of who you are and they simply don't have an aura of caring about the guests.","rating":3,"luggage":null,"highTouch":2.0,"availability":2.5,"competency":3.0,"attitude":2.5},{"hotel":"Raffles","review":"OK to set the scene my family and I booked a rather expensive suite over the Christmas period and spent in excess of $4k for the pleasure. Several incidents occurred such as being asked to move early from our table for the Champagne High tea to some of our luggage being taken from our room - which the hotel compensated us for in full. In all circumstances the duty manager was impeccable - Keith Chong. Had it not been for his extremely professional manner we would have just cancelled our stay.","rating":2,"luggage":1.5,"highTouch":2.0,"availability":3.0,"competency":3.0,"attitude":3.0},{"hotel":"Raffles","review":"My wife called to ask about in-room dining options from hotel restaurants. Guest services said they would check but didn't get back to her. Upon check out when I asked for help with luggage, the first reply was you have to wait 15 mins or would I want to do it myself? So I kinda carried everything out myself but saw there was still ample staff standing around the lobby area.\n\nOverall the hotel stay was still really enjoyable just that we found the guest and butler services underwhelming.","rating":3,"luggage":2.5,"highTouch":2.0,"availability":2.5,"competency":3.0,"attitude":3.0},{"hotel":"Raffles","review":"Everything about the hotel was spectacularly well chosen, groomed, and made to feel like an oasis. From being picked up by the driver in the arrivals hall, to being greeted by the doorman and butler, I felt taken care of and relaxed. The service is top notch. My butler was excellent at recommending me late opening restaurants for my dinner when I arrived later than expected, and took care of my needs including setting up the bath.\n\nI would definitely call Raffles a home away from home.","rating":5,"luggage":5.0,"highTouch":5.0,"availability":5.0,"competency":5.0,"attitude":5.0},{"hotel":"Raffles","review":"Was there to celebrate our wedding anniversary and wow. Definitely it was the right choice we made. Raffles hospitality started way before our check in date. Was in constant contact with Rina via email who was amazing — replies were always positive and quick, some even within the hour.\n\nVanessa from the lobby team gave us a call a day before check in to brief us regarding our privileges and packages. Check in day was a breeze. They assisted us promptly with our luggage and valetparked our car.","rating":5,"luggage":null,"highTouch":5.0,"availability":5.0,"competency":5.0,"attitude":5.0},{"hotel":"Raffles","review":"We stayed in a suite at the Raffles for three nights. It wasn't cheap but it was worth it for the experience.\n\nWhen we arrived the taxi doors were whipped open for us, the front doors opened, and we were seated in comfy chairs away from the main desks. Check-in was done unobtrusively while we relaxed in our seats and our luggage was taken up to our suite. Then a butler came and showed us to the suite and showed us how things worked.\n\nThe staff were exemplary and couldn't do enough to help.","rating":5,"luggage":5.0,"highTouch":5.0,"availability":5.0,"competency":5.0,"attitude":5.0},{"hotel":"Raffles","review":"After a 16 hour journey to get there our luggage was taken from us to appear in our suite later. We were escorted to a seat and offered a drink, being checked in as we took in the elegant charm of our surroundings. From then on things simply improved. A wish for mint tea bags was granted. We received a mild and good natured telling off when we went to reception with a minor query, to be told we should not be running around after the hotel, it should be the other way round. Raffles manages a world class service with apparently effortless ease.","rating":5,"luggage":5.0,"highTouch":5.0,"availability":5.0,"competency":5.0,"attitude":5.0}];
 
-const METRIC_KEYS = ['luggage','highTouch','availability','competency','attitude'];
-const METRIC_NAMES = ['Luggage Handling','High Touch Service','Staff Availability','Staff Competency','Staff Attitude'];
-const METRIC_SHORT = ['Luggage','High Touch','Availability','Competency','Attitude'];
-const RATING_COLORS = { 5:'#c9a84c', 4:'#8bbf78', 3:'#6ba3c9', 2:'#c97f4c', 1:'#c94c4c' };
-const GOLD = '#c9a84c';
-const MUTED = '#555552';
+const KEYS=['luggage','highTouch','availability','competency','attitude'];
+const SHORT=['Luggage','High Touch','Availability','Competency','Attitude'];
+const RATING_COLORS={5:'#c9a84c',4:'#8bbf78',3:'#6ba3c9',2:'#c97f4c',1:'#c94c4c'};
+const HOTEL_COLORS={'Capella':'#c9a84c','Marina Bay Sands':'#6ba3c9','Raffles':'#8bbf78'};
+const HOTELS=['Capella','Marina Bay Sands','Raffles'];
 
-// ── STATE ──
-let activeRating = 'all';
-let activeSort = 'default';
+let activeHotel='all', activeRating='all', activeSort='default';
 
-// ── HELPERS ──
-function avg(arr, key) {
-  const vals = arr.map(r => r[key]).filter(v => v !== null && v !== undefined);
-  return vals.length ? vals.reduce((a,b)=>a+b,0)/vals.length : 0;
+function getHotelData(){return activeHotel==='all'?REVIEWS:REVIEWS.filter(r=>r.hotel===activeHotel);}
+function getFiltered(){let d=getHotelData();if(activeRating!=='all')d=d.filter(r=>r.rating===parseInt(activeRating));return d;}
+function avg(arr,key){const v=arr.map(r=>r[key]).filter(v=>v!=null);return v.length?v.reduce((a,b)=>a+b,0)/v.length:0;}
+
+function buildKPI(){
+  const d=getHotelData();
+  document.getElementById('header-kpi').innerHTML=`
+    <div class="kpi-card"><div class="kpi-val">${d.length}</div><div class="kpi-label">Reviews</div></div>
+    <div class="kpi-card"><div class="kpi-val">${avg(d,'rating').toFixed(1)}</div><div class="kpi-label">Avg Rating</div></div>
+    <div class="kpi-card"><div class="kpi-val">${avg(d,'attitude').toFixed(1)}</div><div class="kpi-label">Avg Attitude</div></div>
+    <div class="kpi-card"><div class="kpi-val">${avg(d,'availability').toFixed(1)}</div><div class="kpi-label">Avg Avail.</div></div>`;
 }
-function fmt(v, d=2) { return v !== null && v !== undefined ? v.toFixed(d) : '—'; }
-function stars(n) {
-  return Array.from({length:5},(_,i)=>`<span class="${i<n?'star-filled':'star-empty'}">★</span>`).join('');
+
+function buildTiles(){
+  const d=getHotelData();
+  document.getElementById('metric-tiles').innerHTML=KEYS.map((k,i)=>{
+    const m=avg(d,k);const cnt=d.filter(r=>r[k]!=null).length;
+    return`<div class="metric-tile"><div class="tile-label">${SHORT[i]}</div><div class="tile-val">${m.toFixed(2)}</div><div class="tile-desc">of 5.0 · ${cnt} reviews</div><div class="tile-bar"><div class="tile-bar-fill" style="width:${(m/5*100).toFixed(0)}%"></div></div></div>`;
+  }).join('');
 }
 
-// ── HEADER KPI ──
-const totalReviews = REVIEWS.length;
-const avgRating = avg(REVIEWS,'rating');
-document.getElementById('header-kpi').innerHTML = `
-  <div class="kpi-card"><div class="kpi-val">${totalReviews}</div><div class="kpi-label">Reviews</div></div>
-  <div class="kpi-card"><div class="kpi-val">${avgRating.toFixed(1)}</div><div class="kpi-label">Avg Rating</div></div>
-  <div class="kpi-card"><div class="kpi-val">${avg(REVIEWS,'attitude').toFixed(1)}</div><div class="kpi-label">Avg Attitude</div></div>
-`;
-
-// ── METRIC TILES ──
-const tilesEl = document.getElementById('metric-tiles');
-METRIC_KEYS.forEach((key, i) => {
-  const mean = avg(REVIEWS, key);
-  const pct = (mean / 5 * 100).toFixed(0);
-  const count = REVIEWS.filter(r => r[key] !== null).length;
-  const tile = document.createElement('div');
-  tile.className = 'metric-tile';
-  tile.dataset.metric = key;
-  tile.innerHTML = `
-    <div class="tile-label">${METRIC_SHORT[i]}</div>
-    <div class="tile-val">${mean.toFixed(2)}</div>
-    <div class="tile-desc">of 5.0 &nbsp;·&nbsp; ${count} reviews</div>
-    <div class="tile-bar"><div class="tile-bar-fill" style="width:${pct}%"></div></div>
-  `;
-  tilesEl.appendChild(tile);
-});
-
-// ── RATING DISTRIBUTION ──
-const ratingCounts = {1:0,2:0,3:0,4:0,5:0};
-REVIEWS.forEach(r => ratingCounts[r.rating]++);
-const maxCount = Math.max(...Object.values(ratingCounts));
-
-const distEl = document.getElementById('rating-dist');
-[5,4,3,2,1].forEach(star => {
-  const cnt = ratingCounts[star];
-  const pct = (cnt/maxCount*100).toFixed(1);
-  const reviewPct = (cnt/totalReviews*100).toFixed(0);
-  const row = document.createElement('div');
-  row.className = 'rating-row';
-  row.dataset.rating = star;
-  row.innerHTML = `
-    <div class="rating-stars" style="color:${RATING_COLORS[star]}">
-      ${star}<span class="star-icon">★</span>
-    </div>
-    <div class="rating-bar-bg">
-      <div class="rating-bar-fill" style="width:${pct}%;background:${RATING_COLORS[star]};opacity:0.75"></div>
-    </div>
-    <div class="rating-count">${cnt}</div>
-    <div class="rating-pct">${reviewPct}%</div>
-  `;
-  row.addEventListener('click', () => {
-    if (activeRating === String(star)) {
-      activeRating = 'all';
-    } else {
-      activeRating = String(star);
-    }
-    updateFilterBtns();
-    renderReviews();
-    updateDistHighlight();
-    updateHistContext();
-  });
-  distEl.appendChild(row);
-});
-
-function updateDistHighlight() {
-  document.querySelectorAll('.rating-row').forEach(row => {
-    if (activeRating === 'all') {
-      row.classList.remove('dim');
-    } else {
-      row.dataset.rating === activeRating ? row.classList.remove('dim') : row.classList.add('dim');
-    }
+function buildDist(){
+  const d=getHotelData();
+  const counts={1:0,2:0,3:0,4:0,5:0};d.forEach(r=>counts[r.rating]++);
+  const max=Math.max(...Object.values(counts))||1;
+  const el=document.getElementById('rating-dist');el.innerHTML='';
+  [5,4,3,2,1].forEach(s=>{
+    const cnt=counts[s];const pct=cnt/max*100;const rp=d.length?(cnt/d.length*100).toFixed(0):0;
+    const row=document.createElement('div');
+    row.className='rating-row'+(activeRating!=='all'&&activeRating!==String(s)?' dim':'');
+    row.innerHTML=`<div class="rating-stars" style="color:${RATING_COLORS[s]}">${s}★</div>
+      <div class="rating-bar-bg"><div class="rating-bar-fill" style="width:${pct}%;background:${RATING_COLORS[s]};opacity:0.75"></div></div>
+      <div class="rating-count">${cnt}</div><div class="rating-pct">${rp}%</div>`;
+    row.addEventListener('click',()=>{
+      activeRating=activeRating===String(s)?'all':String(s);
+      updateFilterBtns();buildDist();renderReviews();updateHists();
+      radarChart.data.datasets[0].data=KEYS.map(k=>+avg(getFiltered(),k).toFixed(2));radarChart.update();
+      document.getElementById('hist-context').textContent=activeRating==='all'?'All reviews':`${activeRating}★ reviews`;
+    });
+    el.appendChild(row);
   });
 }
 
-// ── RADAR CHART ──
-const radarCtx = document.getElementById('radarChart').getContext('2d');
-const radarChart = new Chart(radarCtx, {
-  type: 'radar',
-  data: {
-    labels: METRIC_SHORT,
-    datasets: [{
-      label: 'All Reviews',
-      data: METRIC_KEYS.map(k => avg(REVIEWS,k)),
-      backgroundColor: 'rgba(201,168,76,0.12)',
-      borderColor: GOLD,
-      borderWidth: 2,
-      pointBackgroundColor: GOLD,
-      pointRadius: 4,
-      pointHoverRadius: 6,
-    }]
-  },
-  options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-      r: {
-        min: 0, max: 5,
-        ticks: {
-          stepSize: 1,
-          color: '#555552',
-          font: { family: 'DM Sans', size: 10 },
-          backdropColor: 'transparent',
-        },
-        grid: { color: 'rgba(255,255,255,0.06)' },
-        pointLabels: {
-          color: '#888580',
-          font: { family: 'DM Sans', size: 11 }
-        },
-        angleLines: { color: 'rgba(255,255,255,0.05)' }
-      }
-    },
-    plugins: {
-      legend: { display: false },
-      tooltip: {
-        callbacks: {
-          label: ctx => ` ${ctx.label}: ${ctx.raw.toFixed(2)}/5`
-        }
-      }
-    }
-  }
-});
-
-// ── HISTOGRAM CHARTS ──
-const histCharts = [];
-const histBins = [1,2,3,4,5];
-
-function buildHistData(key, filterRating='all') {
-  const data = filterRating === 'all' ? REVIEWS : REVIEWS.filter(r => r.rating === parseInt(filterRating));
-  const counts = histBins.map(bin => data.filter(r => r[key] !== null && Math.floor(r[key]) === bin || (r[key] !== null && r[key] === bin)).length);
-  // Better bucketing: round to nearest integer
-  const c2 = histBins.map(bin => data.filter(r => r[key] !== null && Math.round(r[key]) === bin).length);
-  return c2;
+let radarChart=null;
+function buildRadar(){
+  const ctx=document.getElementById('radarChart').getContext('2d');
+  const data=KEYS.map(k=>+avg(getFiltered(),k).toFixed(2));
+  if(radarChart){radarChart.data.datasets[0].data=data;radarChart.update();return;}
+  radarChart=new Chart(ctx,{type:'radar',data:{labels:SHORT,datasets:[{label:'Score',data,backgroundColor:'rgba(201,168,76,0.12)',borderColor:'#c9a84c',borderWidth:2,pointBackgroundColor:'#c9a84c',pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,scales:{r:{min:0,max:5,ticks:{stepSize:1,color:'#555552',font:{size:10},backdropColor:'transparent'},grid:{color:'rgba(255,255,255,0.05)'},pointLabels:{color:'#888580',font:{size:11}},angleLines:{color:'rgba(255,255,255,0.04)'}}},plugins:{legend:{display:false}}}});
 }
 
-METRIC_KEYS.forEach((key, i) => {
-  const ctx = document.getElementById(`hist${i}`).getContext('2d');
-  const ch = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: ['1','2','3','4','5'],
-      datasets: [{
-        data: buildHistData(key),
-        backgroundColor: histBins.map(b => `rgba(201,168,76,${0.3+b*0.1})`),
-        borderColor: histBins.map(b => `rgba(201,168,76,${0.5+b*0.1})`),
-        borderWidth: 1,
-        borderRadius: 4,
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false }, tooltip: { callbacks: { title: ctx => `Score: ${ctx[0].label}` } } },
-      scales: {
-        x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#555552', font: {size:11} } },
-        y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#555552', font: {size:10}, stepSize: 1 }, beginAtZero: true }
-      }
-    }
-  });
-  histCharts.push({ chart: ch, key });
-});
-
-// ── SCATTER CHART ──
-const scatterCtx = document.getElementById('scatterChart').getContext('2d');
-const scatterData = REVIEWS.map(r => {
-  const scores = METRIC_KEYS.map(k => r[k]).filter(v => v !== null);
-  const meanScore = scores.length ? scores.reduce((a,b)=>a+b,0)/scores.length : null;
-  return meanScore !== null ? { x: meanScore, y: r.rating, r: r.rating } : null;
-}).filter(Boolean);
-
-const scatterChart = new Chart(scatterCtx, {
-  type: 'scatter',
-  data: {
-    datasets: [5,4,3,2,1].map(star => ({
-      label: `${star}★`,
-      data: REVIEWS.filter(r => r.rating === star).map(r => {
-        const scores = METRIC_KEYS.map(k => r[k]).filter(v => v !== null);
-        const ms = scores.length ? scores.reduce((a,b)=>a+b,0)/scores.length : null;
-        return ms !== null ? {x:ms, y:star} : null;
-      }).filter(Boolean),
-      backgroundColor: RATING_COLORS[star] + 'aa',
-      pointRadius: 6,
-      pointHoverRadius: 8,
-    }))
-  },
-  options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { display: false },
-      tooltip: { callbacks: { label: ctx => ` Avg Sentiment: ${ctx.raw.x.toFixed(2)} · Rating: ${ctx.raw.y}★` } }
-    },
-    scales: {
-      x: { min:1, max:5.2, title: { display:true, text:'Avg Sentiment Score', color:'#555552', font:{size:10} }, grid:{color:'rgba(255,255,255,0.04)'}, ticks:{color:'#555552',font:{size:10}} },
-      y: { min:0.5, max:5.5, ticks:{stepSize:1, color:'#555552', font:{size:10}, callback: v => v+'★'}, grid:{color:'rgba(255,255,255,0.04)'} }
-    }
-  }
-});
-
-// ── FILTER BUTTONS ──
-document.querySelectorAll('.filter-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    activeRating = btn.dataset.rating;
-    updateFilterBtns();
-    updateDistHighlight();
-    renderReviews();
-    updateHistContext();
-    updateHistCharts();
-  });
-});
-
-document.querySelectorAll('.sort-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    activeSort = btn.dataset.sort;
-    document.querySelectorAll('.sort-btn').forEach(b => b.classList.toggle('active', b === btn));
-    renderReviews();
-  });
-});
-
-function updateFilterBtns() {
-  document.querySelectorAll('.filter-btn').forEach(b => {
-    b.classList.toggle('active', b.dataset.rating === activeRating);
-  });
+let compChart=null;
+function buildComparison(){
+  const ctx=document.getElementById('comparisonChart').getContext('2d');
+  const datasets=HOTELS.map(h=>({label:h==='Marina Bay Sands'?'MBS':h,data:KEYS.map(k=>+avg(REVIEWS.filter(r=>r.hotel===h),k).toFixed(2)),backgroundColor:HOTEL_COLORS[h]+'33',borderColor:HOTEL_COLORS[h],borderWidth:2,borderRadius:4}));
+  if(compChart){compChart.data.datasets=datasets;compChart.update();return;}
+  compChart=new Chart(ctx,{type:'bar',data:{labels:SHORT,datasets},options:{responsive:true,maintainAspectRatio:false,scales:{x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#777472',font:{size:11}}},y:{min:0,max:5,grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#777472',font:{size:10},stepSize:1}}},plugins:{legend:{labels:{color:'#888580',font:{size:11},boxWidth:10,padding:16}}}}});
 }
 
-function updateHistContext() {
-  const el = document.getElementById('hist-context');
-  el.textContent = activeRating === 'all' ? 'All reviews' : `${activeRating}★ reviews only`;
-}
-
-function updateHistCharts() {
-  histCharts.forEach(({chart, key}) => {
-    chart.data.datasets[0].data = buildHistData(key, activeRating);
-    chart.update();
+const histCharts=[];
+function histData(k){const d=getFiltered();return[1,2,3,4,5].map(b=>d.filter(r=>r[k]!=null&&Math.round(r[k])===b).length);}
+function buildHists(){
+  KEYS.forEach((k,i)=>{
+    const ctx=document.getElementById(`hist${i}`).getContext('2d');
+    if(histCharts[i]){histCharts[i].data.datasets[0].data=histData(k);histCharts[i].update();return;}
+    histCharts[i]=new Chart(ctx,{type:'bar',data:{labels:['1','2','3','4','5'],datasets:[{data:histData(k),backgroundColor:['rgba(201,168,76,0.35)','rgba(201,168,76,0.45)','rgba(201,168,76,0.55)','rgba(201,168,76,0.7)','rgba(201,168,76,0.85)'],borderColor:'rgba(201,168,76,0.6)',borderWidth:1,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#555552',font:{size:11}}},y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#555552',font:{size:10},stepSize:1},beginAtZero:true}}}});
   });
 }
+function updateHists(){KEYS.forEach((k,i)=>{histCharts[i].data.datasets[0].data=histData(k);histCharts[i].update();});}
 
-// ── RENDER REVIEWS ──
-function renderReviews() {
-  let data = activeRating === 'all' ? REVIEWS : REVIEWS.filter(r => r.rating === parseInt(activeRating));
-  if (activeSort === 'high') data = [...data].sort((a,b) => b.rating - a.rating);
-  else if (activeSort === 'low') data = [...data].sort((a,b) => a.rating - b.rating);
+let scatterChart=null;
+function buildScatter(){
+  const ctx=document.getElementById('scatterChart').getContext('2d');
+  if(scatterChart) return;
+  scatterChart=new Chart(ctx,{type:'scatter',data:{datasets:[5,4,3,2,1].map(s=>({label:`${s}★`,data:REVIEWS.filter(r=>r.rating===s).map(r=>{const sc=KEYS.map(k=>r[k]).filter(v=>v!=null);return sc.length?{x:+(sc.reduce((a,b)=>a+b,0)/sc.length).toFixed(2),y:s}:null;}).filter(Boolean),backgroundColor:RATING_COLORS[s]+'99',pointRadius:6,pointHoverRadius:8}))},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` Sentiment:${c.raw.x} · Rating:${c.raw.y}★`}}},scales:{x:{min:1,max:5.2,title:{display:true,text:'Avg Sentiment',color:'#555552',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#555552',font:{size:10}}},y:{min:0.5,max:5.5,ticks:{stepSize:1,color:'#555552',font:{size:10},callback:v=>v+'★'},grid:{color:'rgba(255,255,255,0.04)'}}}}});
+}
 
-  const grid = document.getElementById('reviews-grid');
-  grid.innerHTML = '';
+document.querySelectorAll('.hotel-tab').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    activeHotel=btn.dataset.hotel;activeRating='all';
+    document.querySelectorAll('.hotel-tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+    updateFilterBtns();buildKPI();buildTiles();buildDist();
+    radarChart.data.datasets[0].data=KEYS.map(k=>+avg(getFiltered(),k).toFixed(2));radarChart.update();
+    updateHists();renderReviews();
+    document.getElementById('hist-context').textContent='All reviews';
+  });
+});
+document.querySelectorAll('.filter-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    activeRating=btn.dataset.rating;updateFilterBtns();buildDist();renderReviews();updateHists();
+    radarChart.data.datasets[0].data=KEYS.map(k=>+avg(getFiltered(),k).toFixed(2));radarChart.update();
+    document.getElementById('hist-context').textContent=activeRating==='all'?'All reviews':`${activeRating}★ reviews`;
+  });
+});
+document.querySelectorAll('.sort-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{activeSort=btn.dataset.sort;document.querySelectorAll('.sort-btn').forEach(b=>b.classList.toggle('active',b===btn));renderReviews();});
+});
+function updateFilterBtns(){document.querySelectorAll('.filter-btn').forEach(b=>b.classList.toggle('active',b.dataset.rating===activeRating));}
 
-  if (!data.length) {
-    grid.innerHTML = '<p style="color:var(--muted);text-align:center;padding:32px">No reviews for this filter.</p>';
-    return;
-  }
-
-  data.forEach((r, idx) => {
-    const card = document.createElement('div');
-    card.className = 'review-card';
-
-    const scores = METRIC_KEYS.map((k,i) => r[k] !== null
-      ? `<span class="score-pill">${METRIC_SHORT[i]}<strong>${r[k].toFixed(1)}</strong></span>` : ''
-    ).join('');
-
-    const textId = `rt-${idx}`;
-    card.innerHTML = `
-      <div class="review-header">
-        <div class="review-rating">
+function stars(n){return Array.from({length:5},(_,i)=>`<span class="${i<n?'star-f':'star-e'}">★</span>`).join('');}
+function renderReviews(){
+  let d=getFiltered();
+  if(activeSort==='high')d=[...d].sort((a,b)=>b.rating-a.rating);
+  else if(activeSort==='low')d=[...d].sort((a,b)=>a.rating-b.rating);
+  const grid=document.getElementById('reviews-grid');grid.innerHTML='';
+  if(!d.length){grid.innerHTML='<p style="color:var(--muted);text-align:center;padding:28px">No reviews match this filter.</p>';return;}
+  d.forEach((r,idx)=>{
+    const hc=HOTEL_COLORS[r.hotel]||'#c9a84c';
+    const scores=KEYS.map((k,i)=>r[k]!=null?`<span class="score-pill">${SHORT[i]}<strong>${r[k].toFixed(1)}</strong></span>`:'').join('');
+    const tid=`rt${idx}${Math.random().toString(36).slice(2)}`;
+    const card=document.createElement('div');card.className='review-card';
+    card.innerHTML=`<div class="review-header">
+        <div class="review-meta">
+          <span class="hotel-pill" style="background:${hc}22;color:${hc};border:1px solid ${hc}44">${r.hotel==='Marina Bay Sands'?'MBS':r.hotel}</span>
           <div class="stars-display">${stars(r.rating)}</div>
-          <span class="review-num" style="color:${RATING_COLORS[r.rating]};font-weight:500">${r.rating}.0</span>
+          <span style="font-size:11px;color:${RATING_COLORS[r.rating]};font-weight:500">${r.rating}.0</span>
         </div>
         <div class="review-scores">${scores}</div>
       </div>
-      <div class="review-text" id="${textId}">${r.review.replace(/\n/g,'<br>')}</div>
-      <button class="review-expand" onclick="toggleExpand('${textId}',this)">Read more</button>
-    `;
+      <div class="review-text" id="${tid}">${r.review.replace(/\n/g,'<br>')}</div>
+      <button class="review-expand" onclick="toggleExpand('${tid}',this)">Read more</button>`;
     grid.appendChild(card);
   });
 }
+function toggleExpand(id,btn){const el=document.getElementById(id);el.classList.toggle('expanded');btn.textContent=el.classList.contains('expanded')?'Show less':'Read more';}
 
-function toggleExpand(id, btn) {
-  const el = document.getElementById(id);
-  el.classList.toggle('expanded');
-  btn.textContent = el.classList.contains('expanded') ? 'Show less' : 'Read more';
-}
-
-// ── INIT ──
-renderReviews();
+buildKPI();buildTiles();buildDist();buildRadar();buildComparison();buildHists();buildScatter();renderReviews();
 </script>
 </body>
 </html>
